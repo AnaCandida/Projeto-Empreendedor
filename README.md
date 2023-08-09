@@ -1,77 +1,100 @@
-# Projeto-Empreendedor
+# Projeto-Empreendedor: Bora_la: app de eventos
+
+## Introdução
+
+Este é um guia para instalar e executar o projeto Bora_la localmente usando Docker e Docker Compose.
+O projeto será construído com Django, mas não é necessário instalar o framework localmente na máquina, vamos ter tudo dentro do container da aplicação, e no container do banco de dados.
+
+## O que é o Docker e Docker Compose?
+
+Docker é uma plataforma que permite desenvolver, implantar e executar aplicativos em contêineres. Contêineres são ambientes isolados que empacotam um aplicativo com todas as dependências necessárias. O Docker Compose é uma ferramenta para definir e executar aplicativos multi-container usando arquivos de configuração YAML, no nosso caso, usamos ele para subir conjuntamente a aplicação e o banco de dados.
+
+## Instalação do Docker
+
+### Linux/Windows
+
+Siga as instruções no site oficial do Docker para o seu respectivo SO: [Docker Installation](https://docs.docker.com/get-docker/). Nos links úteis tem artigos e guias que vão ajudar no processo!
+
+## Instalação do Docker Compose
+
+O Docker Compose normalmente já está incluído na instalação do Docker Desktop para Windows e macOS. Para sistemas Linux, siga as instruções no site oficial: [Docker Compose Installation](https://docs.docker.com/compose/install/).
+
+## Instalação do Plugin Docker para Visual Studio Code
+
+Uma ferramente legal para lidar com container é um plugin direto no VScode, principalmente se voce trabalhar com linux. No windows, o docker desktop tem uma interface que facilita o uso. Procure o plugin "Docker" da Microsoft,após a instalação, você verá um ícone de Docker na barra lateral esquerda do VS Code.
+
+# Desenvolvimento local
+## Dependências e Requisitos
+Antes de subir o projeto Bora_la, certifique-se de que seu ambiente de desenvolvimento atende aos seguintes requisitos:
+
+- Docker e Docker Compose: Instalados e configurados
+
+As dependencias do projeto são instaladas no container a partir da configuração do Dockerfile.
+
+## Subindo o Projeto Bora_la
+
+1. Clone este repositório do projeto:
+   ```bash
+   git clone <URL do Repositório>
+
+2. Crie um novo arquivo '.env' na raiz do projeto. Copie os dados do '.env.sample'.
+
+3. Construa e execute os contêineres usando o Docker Compose com a opção -d para executar em segundo plano e liberar o terminal. Abre o terminal dentro da pasta do projeto que vc acabou de clonar e rode:
+
+    ```bash
+    docker-compose build
+    docker-compose up -d
+    P.S: dependendo da versão, pode ser sem o hifen: 'docker compose up -d'
+    ```
+
+4. O projeto estará disponível em 'http://localhost:8000/'. E a parte administrativa pode ser acessada adicionando '/admin' na url: 'http://localhost:8000/admin'. O usuário-admin de desenvolvido já está criado, acesse com user"admin" e senha "admin"
+
+>IMPORTANTE!!
+>
+>Durante o build do container do Postgres, temos um script bash que implementa a criação do banco, criação do usuario postgres e do respectivo nivel de acesso desse usuário. Esse script fica dentro da pasta 'docker', e é espelhado para dentro do container a partir da imagem configurada no DockerFile.
+> Um processo parecido ocorre com o build do container da aplicação Django, que ao finalizar, roda um scritp bash 'start-dev' que carrega os arquivos estaticos, gera e aplica as migrations e cria um usuario superadmin. Esses passos poderiam ser feitos manualmente, mas como é um processo repetivo, conseguimos automatizar.
 
 
-## Desenvolvimento local
 
-### Python
+### Comandos úteis do Docker
 
-Certifique-se de ter o Python3 instalado em sua máquina.
+1. Para ver os logs do container, utilize o seguinte comando ou o plugin do docker:
 
-### Venv
+    ```bash
+    docker-compose logs bora_la
 
-Usamos ambientes virtuais do python para  isolar as dependências do projeto . Isso permite que diferentes projetos tenham suas próprias bibliotecas e evita conflitos entre versões.Veja a[documentação](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment) para mais detalhes.  
+    ```
 
-Primeiro você deve criar o ambiente e depois ativá-lo.
+2. Para parar os contêineres, use o comando:
 
-```
-python3 -m venv env | py -m venv env  #criar um ambiente com nome 'env'
-env\Scripts\Activate  # ativar Windows
-source env/bin/activate #ativar linux
-deactivate # desativa o ambiente virtual
-```
-### Requirements
+    ```bash
+    docker-compose down -v
 
-Depois de ativar o ambiente virtual, instale as dependências do projeto. No ambiente de desenvolvimento, contamos com as bibliotecas de formatação de código, por isso também é necessário um segundo conjunto de dependências. Para instalar todas as dependências, utilize os seguintes comandos:
+    ```
 
-```
-pip install -r requirements.txt  # instala as dependências do projeto
-pip install -r requirements.dev.txt  # instala as dependências de desenvolvimento
+3. Para entrar no shell do container, use o seguinte comando:
 
-```
+    ```bash
+    docker-compose exec bora_la sh
 
-### Rodando o servidor Django
+    ```
+### Links úteis Docker:
 
-> **Atenção:** Antes de rodar o servidor Django localmente, é necessário configurar o arquivo `.env` com as variáveis de ambiente corretas.
+[Comandos básicos](https://stack.desenvolvedor.expert/appendix/docker/comandos.html)
 
-Para rodar o servidor Django, certifique-se de estar no diretório raiz do projeto (onde o arquivo manage.py está localizado). Use o seguinte comando para iniciar o servidor:
+[Guia para iniciantes](https://dev.to/ingresse/docker-e-docker-compose-um-guia-para-iniciantes-48k8)
 
-```
-python manage.py runserver
-```
+### Links úteis Django:
 
-Isso iniciará o servidor de desenvolvimento do Django e você poderá acessar o aplicativo em http://localhost:8000/ em seu navegador.
+[Documentação oficial](https://docs.djangoproject.com/pt-br/4.2/)
 
+[Tutorial da Documentação-é bem bom](https://docs.djangoproject.com/pt-br/4.1/intro/tutorial01/)
 
+[Tutorial básico:criando um blog](https://www.devmedia.com.br/como-criar-um-blog-com-django-e-python/33710)
 
+[Principais comandos django](https://www.treinaweb.com.br/blog/principais-comandos-do-django-cli)
 
-
-### Banco de dados
-
-Para configurar o banco de dados localmente usando o PostgreSQL, você pode seguir os seguintes passos:
-
-1. Instale o PostgreSQL em sua máquina. Você pode baixar o instalador apropriado para o seu sistema operacional em: https://www.postgresql.org/download/
-
-2. Após a instalação, certifique-se de que o serviço do PostgreSQL esteja em execução.
-
-3. No arquivo .env do seu projeto, preencha as informações sensíveis do banco de dados, como nome do banco de dados (DB_NAME), usuário do banco de dados (DB_USER), senha do usuário (DB_PASSWORD), host (DB_HOST) e porta (DB_PORT).
-
-4. Crie um banco de dados no PostgreSQL com o mesmo nome que você definiu em DB_NAME no arquivo .env.
-
-5. Crie e execute as migrações para criar as tabelas do Django no banco de dados:
-```
-python manage.py makemigrations
-python manage.py migrate
-
-```
-
-
-Pode tbm rodar o banco  postgress usando docker
-
-```
-docker run --name db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
-
-```
-
+[MDN Web Docs](https://developer.mozilla.org/pt-BR/docs/Learn/Server-side/Django)
 ## Boas práticas, qualidade e padrão de código.
 
 > Atenção! Para manter a qualidade do codigo, siga esses passos antes de subir suas alterações pro repositório: 
@@ -96,7 +119,7 @@ O `<tipo>` pode ser um dos seguintes:
 - **chore**: para alterações em tarefas de manutenção
 
 A `<descrição>` deve ser clara e concisa, descrevendo o que a alteração faz e deve ser menor que 70 caracteres. Veja os exemplos:
-    ```
+
     feat: Adicionar autenticação de usuários
     fix: Corrigir erro de digitação no formulário de login
     docs: Atualizar README com instruções de instalação
@@ -104,23 +127,18 @@ A `<descrição>` deve ser clara e concisa, descrevendo o que a alteração faz 
     chore: Atualizar dependências do projeto
     refactor: Dividir função grande em funções menores
 
-    ```
-
 ### Black + Flake8
 
 O Black e o Flake8 são ferramentas de formatação e linting de código em Python, usadas juntas para melhorar a qualidade do código e a experiência de desenvolvimento. Primeiro, você pode executar o Black para formatar o código e garantir a consistência. Em seguida, pode usar o Flake8 para verificar se o código está seguindo as convenções recomendadas e identificar quaisquer problemas adicionais que não sejam abordados pelo Black.
 
- - **Black**:  é uma ferramenta que formata automaticamente o código Python seguindo um conjunto consistente de regras de estilo (customizado no arquivo pyproject.toml). Isso ajuda a manter um código bem formatado e de fácil leitura.**É altamente recomendado executar o Black antes de fazer o commit do código**. Para usar o Black, execute o seguinte comando:
+ - **Black**:  é uma ferramenta que formata automaticamente o código Python seguindo um conjunto consistente de regras de estilo (customizado no arquivo pyproject.toml). Isso ajuda a manter um código bem formatado e de fácil leitura.**É altamente recomendado executar o Black antes de fazer o commit do código**. Para usar o Black, execute o seguinte comando no terminal do container:
 
-        ```
         black nome_do_arquivo.py  # formata o código do arquivo especificado
         black . # formata todo o repositório
-        ```
 
 
-  - **Flake**: O Flake8 é uma ferramenta de linting que verifica o código em busca de problemas, erros ou más práticas. Ele analisa o código em busca de possíveis erros de sintaxe, uso inadequado de variáveis, entre outros problemas. Para usar o Flake8, execute o seguinte comando:
+  - **Flake**: O Flake8 é uma ferramenta de linting que verifica o código em busca de problemas, erros ou más práticas. Ele analisa o código em busca de possíveis erros de sintaxe, uso inadequado de variáveis, entre outros problemas. Para usar o Flake8, execute o seguinte comando no terminal do container:
 
-        ```
-            flake8 nome_do_arquivo.py  # verifica o código do arquivo especificado
-            flake8  # verifica todo o projeto
-        ```
+
+        flake8 nome_do_arquivo.py  # verifica o código do arquivo especificado
+        flake8  # verifica todo o projeto
