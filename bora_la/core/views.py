@@ -7,8 +7,9 @@ from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
+
 def index(request):
-    return render(request, 'index.html')
+    return render(request, "index.html")
 
 
 def cadastrar_usuario(request):
@@ -16,10 +17,11 @@ def cadastrar_usuario(request):
         form_usuario = UserCreationForm(request.POST)
         if form_usuario.is_valid():
             form_usuario.save()
-            return redirect('index')
+            return redirect("index")
     else:
         form_usuario = UserCreationForm()
-    return render(request, 'cadastro.html', {'form_usuario': form_usuario})
+    return render(request, "cadastro.html", {"form_usuario": form_usuario})
+
 
 def logar_usuario(request):
     if request.method == "POST":
@@ -28,9 +30,9 @@ def logar_usuario(request):
         usuario = authenticate(request, username=username, password=password)
         if usuario is not None:
             login(request, usuario)
-            return redirect('index')
+            return redirect("index")
         else:
             form_login = AuthenticationForm()
     else:
         form_login = AuthenticationForm()
-    return render(request, 'login.html', {'form_login': form_login})
+    return render(request, "login.html", {"form_login": form_login})
