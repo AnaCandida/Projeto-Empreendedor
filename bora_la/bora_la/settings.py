@@ -82,11 +82,11 @@ WSGI_APPLICATION = "bora_la.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": env("DB_HOST"),
-        "NAME": env("POSTGRES_NAME"),
-        "USER": env("POSTGRES_USER"),
-        "PASSWORD": env("POSTGRES_PASSWORD"),
-        "PORT": env("POSTGRES_PORT"),
+        "HOST": "db",
+        "NAME": "db_bora_la",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "PORT": "5432"
     }
 }
 

@@ -34,4 +34,4 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     command: >
-      sh -c "/./start-dev.sh"
+      sh -c "python manage.py runserver 0.0.0.0:8000"

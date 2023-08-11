@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+
+
 create_db() {
     database=$1
     connstr=""
