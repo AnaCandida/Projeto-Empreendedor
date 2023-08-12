@@ -7,10 +7,9 @@ RUN apk update && apk add postgresql-client postgresql-dev
 
 COPY ./requirements.txt /requirements.txt
 COPY ./requirements.dev.txt /requirements.dev.txt
-COPY ./docker/postgres/0000_create_databases.sh /0000_create_databases.sh
-COPY  ./start-dev.sh /start-dev.sh
-RUN chmod +x /start-dev.sh
 COPY ./bora_la /bora_la
+COPY  ./start-dev.sh /bora_la/start-dev.sh
+RUN chmod +x /bora_la/start-dev.sh
 COPY pyproject.toml .flake8 /bora_la/
 
 WORKDIR /bora_la

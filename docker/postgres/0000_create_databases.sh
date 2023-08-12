@@ -24,3 +24,8 @@ if [ -n "$POSTGRES_DATABASES" ]; then
 		create_db "$db"
 	done
 fi
+# psql -U postgres
+# CREATE USER postgres WITH ENCRYPTED PASSWORD 'postgres';
+# CREATE DATABASE db_bora_la;
+# GRANT ALL PRIVILEGES ON DATABASE db_bora_la TO postgres;
+# \l

@@ -39,7 +39,7 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
 
 2. Crie um novo arquivo '.env' na raiz do projeto. Copie os dados do '.env.sample'.
 
-3. Construa e execute os contêineres usando o Docker Compose com a opção -d para executar em segundo plano e liberar o terminal. Abre o terminal dentro da pasta do projeto que vc acabou de clonar e rode:
+3. Construa e execute os contêineres usando o Docker Compose com a opção -d para executar em segundo plano e liberar o terminal. Para isso, abra o terminal dentro da pasta do projeto que vc acabou de clonar e rode:
 
     ```bash
     docker-compose build
@@ -47,13 +47,37 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
     P.S: dependendo da versão, pode ser sem o hifen: 'docker compose up -d'
     ```
 
-4. O projeto estará disponível em 'http://localhost:8000/'. E a parte administrativa pode ser acessada adicionando '/admin' na url: 'http://localhost:8000/admin'. O usuário-admin de desenvolvido já está criado, acesse com user"admin" e senha "admin"
+4. Vamos precisar agora criar o banco do nosso app. Entre no shell do container "postgres:12.1" e rode os comandos
 
->IMPORTANTE!!
->
->Durante o build do container do Postgres, temos um script bash que implementa a criação do banco, criação do usuario postgres e do respectivo nivel de acesso desse usuário. Esse script fica dentro da pasta 'docker', e é espelhado para dentro do container a partir da imagem configurada no DockerFile.
-> Um processo parecido ocorre com o build do container da aplicação Django, que ao finalizar, roda um scritp bash 'start-dev' que carrega os arquivos estaticos, gera e aplica as migrations e cria um usuario superadmin. Esses passos poderiam ser feitos manualmente, mas como é um processo repetivo, conseguimos automatizar.
+    ```
+    psql -U postgres
+    CREATE USER postgres WITH ENCRYPTED PASSWORD 'postgres';
+    CREATE DATABASE db_bora_la;
+    GRANT ALL PRIVILEGES ON DATABASE db_bora_la TO postgres;
+    c
+     \l
+    ```
 
+5. Agora que o banco foi criado, de um reestart no container do projeto "projeto-empreendedor-bora_la" para que ele consiga se conectar ao banco.
+
+6. Abra o shell do container do projeto e rode os comandos:
+
+    ```
+    python manage.py makemigrations
+    python manage.py migrate
+
+    python3 manage.py createsuperuser
+    #Adicione o nome "admin"
+    #email: admin@teste.com
+    #Password: admin
+    #Responda "y" ao Bypassa the segurança
+
+    Por fim, inicie o servidor:
+    python manage.py runserver 0.0.0.0:8000
+    ```
+
+6. Se tudo estiver certo, o projeto estará disponível em http://localhost:8000/ .
+Para a area admin, lembre-se de usar o user admin com a senha admin que vc recem criou. 
 
 
 ### Comandos úteis do Docker
@@ -99,9 +123,8 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
 
 > Atenção! Para manter a qualidade do codigo, siga esses passos antes de subir suas alterações pro repositório: 
 1. rode o black
-2. rode o flake8
-3. rode os testes
-4. commit usando Conventional Commits
+2. rode os testes
+3. commit usando Conventional Commits
 
 ### Padrão de commits
 O Conventional Commits é um padrão para mensagens de commit que facilita a leitura e a geração automática de changelogs. Cada mensagem de commit deve seguir o seguinte formato:
@@ -127,18 +150,9 @@ A `<descrição>` deve ser clara e concisa, descrevendo o que a alteração faz 
     chore: Atualizar dependências do projeto
     refactor: Dividir função grande em funções menores
 
-### Black + Flake8
+### Black 
 
-O Black e o Flake8 são ferramentas de formatação e linting de código em Python, usadas juntas para melhorar a qualidade do código e a experiência de desenvolvimento. Primeiro, você pode executar o Black para formatar o código e garantir a consistência. Em seguida, pode usar o Flake8 para verificar se o código está seguindo as convenções recomendadas e identificar quaisquer problemas adicionais que não sejam abordados pelo Black.
-
- - **Black**:  é uma ferramenta que formata automaticamente o código Python seguindo um conjunto consistente de regras de estilo (customizado no arquivo pyproject.toml). Isso ajuda a manter um código bem formatado e de fácil leitura.**É altamente recomendado executar o Black antes de fazer o commit do código**. Para usar o Black, execute o seguinte comando no terminal do container:
+ É uma ferramenta que formata automaticamente o código Python seguindo um conjunto consistente de regras de estilo (customizado no arquivo pyproject.toml). Isso ajuda a manter um código bem formatado e de fácil leitura.**É altamente recomendado executar o Black antes de fazer o commit do código**. Para usar o Black, execute algum dos comandos no terminal do container:
 
         black nome_do_arquivo.py  # formata o código do arquivo especificado
         black . # formata todo o repositório
-
-
-  - **Flake**: O Flake8 é uma ferramenta de linting que verifica o código em busca de problemas, erros ou más práticas. Ele analisa o código em busca de possíveis erros de sintaxe, uso inadequado de variáveis, entre outros problemas. Para usar o Flake8, execute o seguinte comando no terminal do container:
-
-
-        flake8 nome_do_arquivo.py  # verifica o código do arquivo especificado
-        flake8  # verifica todo o projeto
