@@ -66,17 +66,14 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
     python manage.py makemigrations
     python manage.py migrate
 
-    python3 manage.py createsuperuser
-    #Adicione o nome "admin"
-    #email: admin@teste.com
-    #Password: admin
-    #Responda "y" ao Bypassa the segurança
-
+    python manage.py createsuperuser --username=admin --email=admin@example.com
+    use a senha padrao "admin" e digite "y" no bypass de segurança
     Por fim, inicie o servidor:
     python manage.py runserver 0.0.0.0:8000
     ```
 
 6. Se tudo estiver certo, o projeto estará disponível em http://localhost:8000/ .
+Se der erro, tente restartar ambos os containers.
 Para a area admin, lembre-se de usar o user admin com a senha admin que vc recem criou. 
 
 
