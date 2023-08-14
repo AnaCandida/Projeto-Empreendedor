@@ -1,0 +1,9 @@
+/* Add this CSS in your main.css or a custom stylesheet */
+
+/* Remove the default focus effect for input elements */
+.form-control:focus,
+.form-control.focus,
+.form-control:focus-visible {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Slightly black shadow */
+}
