@@ -16,13 +16,6 @@
     <link rel="stylesheet" href="{% static 'bora_la/css/main.css' %}">
 </head>
 <body>
-    {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
 
 <div class="container mt-5">
   <div class="row justify-content-center align-items-start vh-100">
@@ -33,7 +26,8 @@
       <div class="card shadow py-3 px-3">
         <!-- <div class="card-header">Login</div> -->
         <div class="card-body">
-          <form>
+          <h2 class="text-center mb-4">Entrar</h2>
+          <form method="post">
             {% csrf_token %}
 
             <div class="mb-3">
@@ -52,6 +46,14 @@
                 <input type="password" class="form-control" id="password" name="password" required>
               </div>
             </div>
+            {% if messages %}
+            <ul class="messages">
+              {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+
             <div class="mb-3 d-grid">
               <button type="submit" class="btn btn-success btn-block mt-3 fw-bold py-2 shadow-sm">Entrar</button>
             </div>
