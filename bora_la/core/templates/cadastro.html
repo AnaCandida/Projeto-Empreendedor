@@ -45,7 +45,7 @@
             <div class="card-body">
                 <h2 class="text-center mb-4">Cadastrar Usuário</h2>
 
-                <form method="post" id="userForm">
+                <form method="post" action="{% url 'cadastrar_usuario' %}" id="userForm">
 
                     {% csrf_token %}
 
@@ -139,7 +139,7 @@
                     </div>
                   
                     <div class="form-group d-grid">
-                        <button type="button" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
+                        <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
                     </div>
 
                 </form>
@@ -158,18 +158,13 @@
 <script>
 $(document).ready(function() {
     $('#telefone').mask('(00) 00000-0000');
-
-    $("#customButton").click(function() {
-        $("form#userForm").submit();
-    });
-
     var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
     var maxChecked = 4;
 
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
-            
+
             if (checkedCount > maxChecked) {
                 this.checked = false;
             } else {
@@ -184,8 +179,12 @@ $(document).ready(function() {
         });
     });
 
+    $("#userForm").submit(function() {
+        console.log("Form submitted"); 
+    });
+
     $('#user_type').on('change', function () {
-      $('#razao_social_container').toggle(this.value === '2');
+        $('#razao_social_container').toggle(this.value === '2');
     });
 });
 </script>
