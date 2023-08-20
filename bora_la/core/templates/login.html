@@ -1,71 +1,130 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">    
-    <title>Login</title>
-    <!-- Ícone da aba do navegador -->  
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">  
-    <!--  CSS do Bootstrap 5 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!-- Icons Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+   <head>
+      <meta charset="UTF-8">
+      <title>Login</title>
+      <!-- Ícone da aba do navegador -->  
+      <link rel="icon" type="image/x-icon" href="/favicon.ico">
+      <!--  CSS do Bootstrap 5 -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+      <!-- Icons Bootstrap -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+      <!-- Estilos globais -->
+      <link rel="stylesheet" href="{% static 'bora_la/css/main.css' %}">
+      <style>
+         /* Estilo personalizado para o links */
+         .custom-link {
+         color: green;
+         display: flex;
+         align-items: center; 
+         font-size: small;
 
-    <!-- Estilos globais -->
-    <link rel="stylesheet" href="{% static 'bora_la/css/main.css' %}">
-</head>
-<body>
+         }
+      </style>
+   </head>
+   <body>
 
-<div class="container mt-5">
-  <div class="row justify-content-center align-items-start vh-100">
-    <div class="col-md-6">
-      <div class="mb-4 text-center">
-        <img src="{% static 'bora_la/images/logo.png' %}" alt="Logo" style="max-width: 200px; width: 100%;">
+      <div class="container mt-5">
+      <div class="row justify-content-center align-items-start vh-100">
+         <div class="col-md-6">
+            <div class="mb-4 text-center">
+               <img src="{% static 'bora_la/images/logo.png' %}" alt="Logo" style="max-width: 200px; width: 100%;">
+            </div>
+            <div class="card shadow py-3 px-3">
+               <!-- <div class="card-header">Login</div> -->
+               <div class="card-body">
+                  <h2 class="text-center mb-4">Entrar</h2>
+                  <form method="post">
+                     {% csrf_token %}
+
+                     <div class="mb-3">
+                        {{form_login.username.errors}}
+                        <label for="username" class="form-label my-1">Usuário:</label>
+                        <div class="input-group">
+                           <span class="input-group-text"><i class="bi bi-person"></i></span>
+                           <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                     </div>
+                     <div class="mb-3">
+                        {{form_login.password.errors}}
+                        <label for="password" class="form-label my-1">Senha:</label>
+                        <div class="input-group">
+                           <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                           <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                     </div>
+                     {% if messages %}
+                     <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                     </ul>
+                     {% endif %}
+                     <div class="mb-2">
+                        <!-- link para abrir o pop-up -->
+                        <a href="#" id="forgotPasswordLink"class="custom-link">Esqueceu sua senha?</a>
+                        <a href="{% url 'cadastrar_usuario' %}" id="registerLink" class="custom-link">Cadastre-se</a>
+
+                     </div>
+                     <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                           <div class="modal-content">
+                              <div class="modal-header">
+                                 <h5 class="modal-title" id="forgotPasswordModalLabel">Esqueceu sua senha?</h5>
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                 <!-- Conteúdo do pop-up a ser desenvolvido no projeto 2 -->
+                                 Conteúdo a ser desenvolvido no projeto 2.
+                              </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="mb-3 d-grid">
+                        <button type="submit" class="btn btn-success btn-block mt-3 fw-bold py-2 shadow-sm">Entrar</button>
+                     </div>
+                     <hr class="my-4">
+                     <!-- Linha reta -->
+                     <div class="d-grid">
+                        <button type="button" class="btn btn-outline-secondary btn-block py-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#googleLoginModal">
+                        <i class="bi bi-google me-2"></i> Logar com o Google
+                        </button>
+                        <div class="modal fade" id="googleLoginModal" tabindex="-1" aria-labelledby="googleLoginModalLabel" aria-hidden="true">
+                           <div class="modal-dialog">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+                                    <h5 class="modal-title" id="googleLoginModalLabel">Logar com o Google</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body">
+                                    <!-- Conteúdo do pop-up a ser desenvolvido no projeto 2 -->
+                                    Conteúdo a ser desenvolvido no projeto 2.
+                                 </div>
+                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                  </form>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
-      <div class="card shadow py-3 px-3">
-        <!-- <div class="card-header">Login</div> -->
-        <div class="card-body">
-          <h2 class="text-center mb-4">Entrar</h2>
-          <form method="post">
-            {% csrf_token %}
-
-            <div class="mb-3">
-              {{form_login.username.errors}}
-              <label for="username" class="form-label my-1">Usuário:</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                <input type="text" class="form-control" id="username" name="username" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              {{form_login.password.errors}}
-              <label for="password" class="form-label my-1">Senha:</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" id="password" name="password" required>
-              </div>
-            </div>
-            {% if messages %}
-            <ul class="messages">
-              {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-              {% endfor %}
-            </ul>
-            {% endif %}
-
-            <div class="mb-3 d-grid">
-              <button type="submit" class="btn btn-success btn-block mt-3 fw-bold py-2 shadow-sm">Entrar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--  arquivos JS do Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+         $(document).ready(function() {
+             // Abrir o pop-up ao clicar no link "Esqueceu sua senha?"
+             $("#forgotPasswordLink").click(function() {
+                 $("#forgotPasswordModal").modal("show");
+             });
+         });
+      </script>
+   </body>
 </html>
