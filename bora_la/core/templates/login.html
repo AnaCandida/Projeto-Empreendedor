@@ -39,11 +39,11 @@
                      {% csrf_token %}
 
                      <div class="mb-3">
-                        {{form_login.username.errors}}
                         <label for="username" class="form-label my-1">Usuário:</label>
                         <div class="input-group">
                            <span class="input-group-text"><i class="bi bi-person"></i></span>
                            <input type="text" class="form-control" id="username" name="username" required>
+                           {{form_login.username.errors}}
                         </div>
                      </div>
                      <div class="mb-3">
@@ -55,11 +55,11 @@
                         </div>
                      </div>
                      {% if messages %}
-                     <ul class="messages">
+                     <div class="error-message">
                         {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        <ul{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</ul>
                         {% endfor %}
-                     </ul>
+                     </div>
                      {% endif %}
                      <div class="mb-2">
                         <!-- link para abrir o pop-up -->

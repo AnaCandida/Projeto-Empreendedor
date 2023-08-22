@@ -57,17 +57,15 @@ def cadastrar_usuario(request):
 
             return redirect("listar_eventos")
         else:
-            form_usuario = UserCreationForm()
             erros_formulario = form_usuario.errors
-            print(erros_formulario)
             return render(
                 request,
                 "cadastro.html",
                 {"form_usuario": form_usuario, "erros_formulario": erros_formulario},
-            )  # Adicione o retorno aqui
+            )
     else:
         form_usuario = UserCreationForm()
-    return render(request, "cadastro.html", {"form_usuario": form_usuario})
+        return render(request, "cadastro.html", {"form_usuario": form_usuario})
 
 
 def logar_usuario(request):
@@ -93,7 +91,6 @@ def deslogar_usuario(request):
     return redirect("index")
 
 
-@login_required(login_url="/logar_usuario")
 def criar_evento(request):
     return render(request, "criar_evento.html")
 
