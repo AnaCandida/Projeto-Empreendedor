@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de eventos</title>
+    <!-- Inclua o CSS do Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Inclua o Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    
+    <!-- Estilos globais -->
+    <link rel="stylesheet" href="{% static 'bora_la/css/main.css' %}">
+
+</head>
+<body>
+<!-- Botão de voltar no canto superior esquerdo -->
+  <div class="position-fixed top-0 start-0 m-3">
+    <a href="{% url 'index' %}" class="btn btn-success">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+
+  <!-- Ícone de usuário no canto superior direito -->
+<div class="position-fixed top-0 end-0 m-3">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+            </svg>                 
+             
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#">Perfil</a></li>
+        </ul>
+    </div>
+</div>
+<!-- Layout do formulário -->
+<div class="container mt-5 mb-4">
+  <div class="row justify-content-center align-items-start">
+    <div class="col-md-8">
+        <div class="card shadow py-3 px-3">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Cadastrar Evento</h2>
+
+                <!-- editar após back-end --><form method="post" action="{% url 'cadastrar_usuario' %}" id="userForm">
+
+                    {% csrf_token %}
+
+                    <div class="form-group mb-1">
+                        <label for="nome">Usuário:</label>
+                        <input type="text" class="form-control" name="username" id="username" value="{{ form_login.username.value }}">
+                        <div class="error-message">{{form_usuario.username.errors}}</div>
+                    </div>
+
+                    <div class="form-group mb-1">
+                        <label for="nome">Senha:</label>
+                        <input type="password" class="form-control" name="password1" id="password1">
+                        <div class="error-message">{{form_usuario.password1.errors}}</div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="nome">Confirmação de senha:</label>
+                        <input type="password" class="form-control" name="password2" id="password2">
+                        <div class="error-message">{{form_usuario.password2.errors}}</div>
+                    </div>
+
+                    <hr>
+                    
+                    <div class="form-group mb-1">
+                        <label for="user_type">Tipo de usuário:</label>
+                        <select class="form-select" name="user_type" id="user_type">
+                            <option value="1">Usuário Geral</option>
+                            <option value="2">Organizador de Evento</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3" id="razao_social_container" style="display: none;">
+                      <label for="razao_social">Razão Social:</label>
+                      <input type="text" class="form-control" name="razao_social" id="razao_social">
+                    </div>
+
+                    <div class="form-group mb-1">
+                        <label for="nome">Nome:</label>
+                        <input type="text" class="form-control" name="nome" id="nome">
+                    </div>
+
+                    <div class="form-group mb-1">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" name="email" id="email" >
+
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="telefone">Telefone:</label>
+                        <input type="tel" class="form-control" name="telefone" id="telefone" data-mask="(00) 00000-0000">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" name="whatsapp" id="whatsapp">
+                            <label class="form-check-label" for="whatsapp">Whatsapp</label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group mb-5">
+                      <label for="pref_categorias">Categorias preferenciais (até 4):</label>
+                      <div class="mb-2"></div>
+                      <div class="form-check">
+                          <div class="row">
+                              <div class="col-md-4">
+                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="comida" id="categoriaComida">
+                                  <label class="form-check-label" for="categoriaComida">Comida</label>
+                              </div>
+                              <div class="col-md-4">
+                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="ar_livre" id="categoriaArLivre">
+                                  <label class="form-check-label" for="categoriaArLivre">Ar Livre</label>
+                              </div>
+                              <div class="col-md-4">
+                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="negocio_local" id="categoriaNegocioLocal">
+                                  <label class="form-check-label" for="categoriaNegocioLocal">Negócio Local</label>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-4">
+                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="cultura" id="categoriaCultura">
+                                  <label class="form-check-label" for="categoriaCultura">Cultura</label>
+                              </div>
+                              <div class="col-md-4">
+                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="esporte" id="categoriaEsporte">
+                                  <label class="form-check-label" for="categoriaEsporte">Esporte</label>
+                              </div>
+                              <div class="col-md-4">
+                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="musica" id="categoriaMusica">
+                                  <label class="form-check-label" for="categoriaMusica">Música</label>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                  
+                    <div class="form-group d-grid">
+                        <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Arquivos JS do Bootstrap e jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#telefone').mask('(00) 00000-0000');
+    var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
+    var maxChecked = 4;
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
+
+            if (checkedCount > maxChecked) {
+                this.checked = false;
+            } else {
+                checkboxes.forEach(function(cb) {
+                    if (!cb.checked && checkedCount >= maxChecked) {
+                        cb.disabled = true;
+                    } else {
+                        cb.disabled = false;
+                    }
+                });
+            }
+        });
+    });
+
+    $("#userForm").submit(function() {
+        console.log("Form submitted"); 
+    });
+
+    $('#user_type').on('change', function () {
+        $('#razao_social_container').toggle(this.value === '2');
+    });
+});
+</script>
+</body>
+</html>
