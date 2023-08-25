@@ -13,6 +13,32 @@
     <!-- Estilos globais -->
     <link rel="stylesheet" href="{% static 'bora_la/css/main.css' %}">
 
+    <style>
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    
+        .image-preview {
+            margin-top: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            background-size: cover;
+            background-position: center;
+        }
+    
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+
 </head>
 <body>
 <!-- Botão de voltar no canto superior esquerdo -->
@@ -47,8 +73,16 @@
 
                 <!-- editar após back-end --><form method="post" action="{% url 'cadastrar_usuario' %}" id="userForm">
 
-                    {% csrf_token %}
-
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="image-upload">
+                            <label for="image">Escolha uma capa:</label>
+                            <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
+                            <div class="image-preview" id="imagePreview" style="width:600px">
+                                <img src="#" alt="Preview">
+                            </div>
+                        </div>
+                    </form>
+                    
                     <div class="form-group mb-1">
                         <label for="nome_evento">Nome do evento:</label>
                        <!-- editar após back-end --> <input type="text" class="form-control" name="username" id="username" value="{{ form_login.username.value }}">
@@ -68,8 +102,8 @@
                     </div>
 
                     <div class="form-group mb-1">
-                        <label for="data_evento">Data:</label>
-                       <!-- editar após back-end --> <input type="date" class="form-control" name="password2" id="password2" value="xx/xx/xxxx">
+                        <label for="data_evento">Data e horário de inicio:</label>
+                       <!-- editar após back-end --> <input type="datetime-local" class="form-control" name="password2" id="password2" value="xx/xx/xxxx">
                        <!-- editar após back-end --> <div class="error-message">{{form_usuario.password2.errors}}</div>
                     </div>
 
@@ -155,6 +189,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
 <script>
+
+function previewImage(event) {
+        const imagePreview = document.getElementById('imagePreview');
+        const image = imagePreview.querySelector('img');
+        image.src = URL.createObjectURL(event.target.files[0]);
+        image.style.display = 'block';
+    }
 $(document).ready(function() {
     $('#telefone').mask('(00) 00000-0000');
     var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
