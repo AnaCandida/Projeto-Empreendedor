@@ -97,41 +97,17 @@
 
                     <div class="form-group mb-1">
                         <label for="preco_evento">Preço:</label>
-                       <!-- editar após back-end --> <input type="number" class="form-control" name="password2" id="password2" value="em R$">
-                       <!-- editar após back-end --> <div class="error-message">{{form_usuario.password2.errors}}</div>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <!-- editar após back-end --><input type="number" class="form-control" name="preco_evento" id="preco_evento" placeholder="Informe o preço">
+                        </div>
+                        <!-- editar após back-end --><div class="error-message">{{form_usuario.preco_evento.errors}}</div>
                     </div>
 
                     <div class="form-group mb-1">
                         <label for="data_evento">Data e horário de inicio:</label>
                        <!-- editar após back-end --> <input type="datetime-local" class="form-control" name="password2" id="password2" value="xx/xx/xxxx">
                        <!-- editar após back-end --> <div class="error-message">{{form_usuario.password2.errors}}</div>
-                    </div>
-
-                    <hr>
-
-                    <div class="form-group mb-2">
-                        <label for="organizador">Organizador:</label>
-                        <!-- editar após back-end --><input type="text" class="form-control" name="nome" id="nome">
-                    </div>
-
-                    <div class="form-group mb-3" id="razao_social_container" style="display: none;">
-                        <label for="razao_social">Razão Social:</label>
-                        <input type="text" class="form-control" name="razao_social" id="razao_social">
-                      </div>
-
-                    <div class="form-group mb-2">
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control" name="email" id="email" >
-
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <label for="telefone">Telefone:</label>
-                        <input type="tel" class="form-control" name="telefone" id="telefone" data-mask="(00) 00000-0000">
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" name="whatsapp" id="whatsapp">
-                            <label class="form-check-label" for="whatsapp">Whatsapp</label>
-                        </div>
                     </div>
 
                     <hr>
@@ -197,7 +173,6 @@ function previewImage(event) {
         image.style.display = 'block';
     }
 $(document).ready(function() {
-    $('#telefone').mask('(00) 00000-0000');
     var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
     var maxChecked = 4;
 
@@ -221,10 +196,6 @@ $(document).ready(function() {
 
     $("#userForm").submit(function() {
         console.log("Form submitted"); 
-    });
-
-    $('#user_type').on('change', function () {
-        $('#razao_social_container').toggle(this.value === '2');
     });
 });
 </script>
