@@ -104,3 +104,54 @@ def listar_eventos(request):
             tipo_usuario = usuario.tipo_usuario
 
     return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
+
+
+def cadastrar_evento(request):
+    if request.method == "POST":
+        form_evento = EventoCreationForm(request.POST)
+        if form_evento.is_valid():
+            #evento = form_evento.save()
+
+            django_user = user
+                        
+            nome_evento = request.POST.get("nome_evento")
+            descricao = request.POST.get("descricao")
+            horario =  request.POST.get("horario")
+            localizacao = request.POST.get("localizacao")
+            preco_ingressos = request.POST.get("preco_ingressos")
+            imagem = request.POST.get("imagem")
+            categoria = request.POST.get("categoria")
+            organizador = request.user
+
+            try:
+                print("Evento cadastrado com sucesso")
+                criar_evento = Evento.objects.create(
+                    django_user=user,
+                    nome=nome_evento,
+                    descricao=descricao,
+                    foto=imagem,
+                    organizador_id=organizador,
+                    preco=preco_ingressos,
+                    horario=pref_categorias,
+                    localizacao = localizacao,
+                    categorias_id = categoria,
+                )
+            except Exception as e:
+                print(e)       
+
+            form_evento.save()
+
+            return redirect("listar_eventos")  # Redirecione para a lista de eventos após o cadastro
+
+        else:
+            erros_formulario = form_evento.errors
+            return render(
+                request,
+                "criar_evento.html",
+                {"form_evento": form_evento, "erros_formulario": erros_formulario},
+            )    
+    else:
+        form_evento = EventoCreationForm()
+
+    return render(request, "criar_evento.html", {"form_evento": form_evento})
+
