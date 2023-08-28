@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Eventos{% endblock %}
+
+{% block content %}
+   <div class="container mt-5">
+      <div class="row justify-content-center">
+         <div class="col-md-10">
+            <h1 class="mb-4">Meus Eventos</h1>
+
+            {% if eventos %}
+               <div class="row">
+                  {% for evento in eventos %}
+                     <div class="col-md-4 mb-4">
+                        <div class="card">
+                           {% if evento.foto %}
+                              <img src="{{ evento.foto.url }}" class="card-img-top" alt="{{ evento.nome }}">
+                           {% endif %}
+                           <div class="card-body">
+                              <h5 class="card-title">{{ evento.nome }}</h5>
+                              <p class="card-text">{{ evento.descricao }}</p>
+                              <p class="card-text"><strong>Horário:</strong> {{ evento.horario }}</p>
+                              <p class="card-text"><strong>Localização:</strong> {{ evento.localizacao }}</p>
+                              <p class="card-text"><strong>Preço:</strong> R$ {{ evento.preco }}</p>
+                              <!-- Renderização das categorias -->
+                              <p class="card-text"><strong>Categorias:</strong>
+                                 {% for categoria in evento.categorias_id.all %}
+                                    <span class="badge badge-secondary">{{ categoria.nome }}</span>
+                                 {% endfor %}
+                              </p>
+                              <!-- Fim da renderização das categorias -->
+                              </div>
+                        </div>
+                     </div>
+                  {% endfor %}
+               </div>
+            {% else %}
+               <p>{{ error_message }}</p>
+            {% endif %}
+         </div>
+      </div>
+   </div>
+{% endblock %}

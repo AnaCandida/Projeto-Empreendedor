@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Evento{% endblock %}
+
+{% block content %}
+   <div class="container mt-5">
+      <div class="row justify-content-center">
+         <div class="col-md-8">
+            <h1 class="mb-4">Editar Evento</h1>
+
+            <form method="post" enctype="multipart/form-data">
+               {% csrf_token %}
+
+               <!-- Campos de edição do evento -->
+               <div class="mb-3">
+                  <label for="nome_evento" class="form-label">Nome do Evento</label>
+                  <input type="text" class="form-control" id="nome_evento" name="nome_evento" value="{{ evento.nome }}">
+               </div>
+
+               <div class="mb-3">
+                  <label for="descricao_evento" class="form-label">Descrição do Evento</label>
+                  <textarea class="form-control" id="descricao_evento" name="descricao_evento">{{ evento.descricao }}</textarea>
+               </div>
+
+               <!-- Outros campos de edição do evento ... -->
+
+               <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </form>
+         </div>
+      </div>
+   </div>
+{% endblock %}

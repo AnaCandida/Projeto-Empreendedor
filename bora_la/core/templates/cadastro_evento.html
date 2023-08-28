@@ -1,179 +1,119 @@
+<!-- CADASTRO DE EVENTO -->
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Cadastro de eventos</title>
-    <!-- Inclua o CSS do Bootstrap 5 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!-- Inclua o Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-    
-    <!-- Estilos globais -->
-    <link rel="stylesheet" href="{% static 'bora_la/css/main.css' %}">
+{% block content %}
+<style>
+    .image-upload {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-    <style>
-        .image-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    
-        .image-preview {
-            margin-top: 10px;
-            width: 200px;
-            height: 200px;
-            border: 1px solid #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            background-size: cover;
-            background-position: center;
-        }
-    
-        .image-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-    </style>
+    .image-preview {
+        margin-top: 10px;
+        width: 200px;
+        height: 200px;
+        border: 1px solid #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        background-size: cover;
+        background-position: center;
+    }
 
-</head>
-<body>
-<!-- Botão de voltar no canto superior esquerdo -->
-  <div class="position-fixed top-0 start-0 m-3">
-    <a href="{% url 'index' %}" class="btn btn-success">
-        <i class="bi bi-arrow-left"></i> Voltar
-    </a>
-</div>
-
-
-  <!-- Ícone de usuário no canto superior direito -->
-<div class="position-fixed top-0 end-0 m-3">
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-            </svg>                 
-             
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li><a class="dropdown-item" href="#">Perfil</a></li>
-        </ul>
-    </div>
-</div>
-<!-- Layout do formulário -->
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>
 <div class="container mt-5 mb-4">
-  <div class="row justify-content-center align-items-start">
-    <div class="col-md-8">
-        <div class="card shadow py-3 px-3">
-            <div class="card-body">
-                <h2 class="text-center mb-4">Cadastrar Evento</h2>
+        <div class="row justify-content-center align-items-start">
+            <div class="col-md-8">
+                <div class="card shadow py-3 px-3">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4">Cadastrar Evento</h2>
 
-                <!-- editar após back-end --><form method="post" action="{% url 'cadastrar_usuario' %}" id="userForm">
+                        <form method="post" action="{% url 'cadastrar_evento' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
 
-                    <form method="post" enctype="multipart/form-data">
-                        <div class="image-upload">
-                            <label for="image">Escolha uma capa:</label>
-                            <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
-                            <div class="image-preview" id="imagePreview" style="width:600px">
-                                <img src="#" alt="Preview">
+                            <div class="image-upload">
+                                <label for="image">Escolha uma capa para o evento:</label>
+                                <input type="file" name="image" id="image" accept="image/jpeg" onchange="previewImage(event)" required>
+                                <div class="image-preview"id="imagePreview" style="width:80%">
+                                    <img src="#" alt="Preview">
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                    
-                    <div class="form-group mb-1">
-                        <label for="nome_evento">Nome do evento:</label>
-                       <!-- editar após back-end --> <input type="text" class="form-control" name="username" id="username" value="{{ form_login.username.value }}">
-                        <!-- editar após back-end --><div class="error-message">{{form_usuario.username.errors}}</div>
-                    </div>
 
-                    <div class="form-group mb-1">
-                        <label for="descricao_evento">Descrição:</label>
-                      <!-- editar após back-end -->  <input type="text" class="form-control" name="password1" id="password1" style="width: 100%; height: 120px;" >
-                        <!-- editar após back-end --><div class="error-message">{{form_usuario.password1.errors}}</div>
-                    </div>
+                            <div class="form-group mb-3">
+                                <label for="nome_evento">Nome do evento:</label>
+                                <input type="text" class="form-control" name="nome_evento" id="nome_evento" required>
+                            </div>
 
-                    <div class="form-group mb-1">
-                        <label for="preco_evento">Preço:</label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <!-- editar após back-end --><input type="number" class="form-control" name="preco_evento" id="preco_evento" placeholder="Informe o preço">
-                        </div>
-                        <!-- editar após back-end --><div class="error-message">{{form_usuario.preco_evento.errors}}</div>
-                    </div>
+                            <div class="form-group mb-3">
+                                <label for="descricao_evento">Descrição:</label>
+                                <textarea class="form-control" name="descricao_evento" id="descricao_evento" rows="4" required></textarea>
+                            </div>
 
-                    <div class="form-group mb-1">
-                        <label for="data_evento">Data e horário de inicio:</label>
-                       <!-- editar após back-end --> <input type="datetime-local" class="form-control" name="password2" id="password2" value="xx/xx/xxxx">
-                       <!-- editar após back-end --> <div class="error-message">{{form_usuario.password2.errors}}</div>
-                    </div>
+                            <div class="form-group mb-3">
+                                <label for="preco_evento">Valor dos ingressos</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00" pattern="\d+(\,\d{1,2})?" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
+                                <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
+                            </div>
+                            
 
-                    <hr>
+                            <div class="form-group mb-3">
+                                <label for="data_evento">Data e horário de início:</label>
+                                <input type="datetime-local" class="form-control" name="data_evento" id="data_evento" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="nome_evento">Endereço:</label>
+                                <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" required>
+                            </div>
 
-                    <div class="form-group mb-5">
-                      <label for="pref_categorias">Categorias do evento (até 4):</label>
-                      <div class="mb-2"></div>
-                      <div class="form-check">
-                          <div class="row">
-                              <div class="col-md-4">
-                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="comida" id="categoriaComida">
-                                  <label class="form-check-label" for="categoriaComida">Comida</label>
-                              </div>
-                              <div class="col-md-4">
-                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="ar_livre" id="categoriaArLivre">
-                                  <label class="form-check-label" for="categoriaArLivre">Ar Livre</label>
-                              </div>
-                              <div class="col-md-4">
-                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="negocio_local" id="categoriaNegocioLocal">
-                                  <label class="form-check-label" for="categoriaNegocioLocal">Negócio Local</label>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <div class="col-md-4">
-                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="cultura" id="categoriaCultura">
-                                  <label class="form-check-label" for="categoriaCultura">Cultura</label>
-                              </div>
-                              <div class="col-md-4">
-                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="esporte" id="categoriaEsporte">
-                                  <label class="form-check-label" for="categoriaEsporte">Esporte</label>
-                              </div>
-                              <div class="col-md-4">
-                                  <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="musica" id="categoriaMusica">
-                                  <label class="form-check-label" for="categoriaMusica">Música</label>
-                              </div>
-                          </div>
-                      </div>
-                    </div>
-                  
-                    <div class="form-group d-grid">
-                        <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
-                    </div>
+                            <div class="form-group mb-4">
+                                <label for="pref_categorias">Categorias do evento (até 4):</label>
+                                <div class="form-check">
+                                    {% for categoria in categorias %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}">
+                                            <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
 
-                </form>
+                            <div class="form-group d-grid">
+                                <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-  </div>
 </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
-<!-- Arquivos JS do Bootstrap e jQuery -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script>
+        function previewImage(event) {
+            const imagePreview = document.getElementById('imagePreview');
+            const image = imagePreview.querySelector('img');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            image.style.display = 'block';
+        }
 
-<script>
-
-function previewImage(event) {
-        const imagePreview = document.getElementById('imagePreview');
-        const image = imagePreview.querySelector('img');
-        image.src = URL.createObjectURL(event.target.files[0]);
-        image.style.display = 'block';
-    }
-$(document).ready(function() {
-    var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
+        $(document).ready(function() {
+            var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
     var maxChecked = 4;
 
     checkboxes.forEach(function(checkbox) {
@@ -193,11 +133,36 @@ $(document).ready(function() {
             }
         });
     });
+        });
 
-    $("#userForm").submit(function() {
-        console.log("Form submitted"); 
+        document.getElementById("gratuitoCheckbox").addEventListener("change", function() {
+        const precoInput = document.getElementById("preco_evento");
+        precoInput.value = ""; // Limpa o campo de preço ao marcar/desmarcar "Gratuito"
+        precoInput.disabled = this.checked; // Desativa o campo de preço se "Gratuito" estiver marcado
     });
-});
-</script>
-</body>
-</html>
+            // Formatação e validação customizada para o preço do ingresso
+
+    const precoInput = document.getElementById("preco_evento");
+        // Limpa o valor ao focar no campo
+        precoInput.addEventListener("focus", function() {
+            this.value = "";
+        });
+    // Formatação e validação ao perder o foco no campo
+    precoInput.addEventListener("blur", function() {
+            const value = this.value.replace(".", "").replace(",", ".");
+            if (value === "" || isNaN(value) || parseFloat(value) > 1000) {
+                this.value = "";
+            } else {
+                const floatValue = parseFloat(value);
+                const formattedValue = floatValue.toLocaleString("pt-BR", {
+                    // style: "currency",
+                    currency: "BRL",
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+                this.value = formattedValue;
+            }
+        });
+    </script>
+{% endblock %}
+
