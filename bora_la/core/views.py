@@ -179,6 +179,6 @@ def cadastrar_evento(request):
     )
 
 
-# def editar_evento(request, event_id):
+def editar_evento(request, event_id):
 
-#     return render(request, "cadastro_evento.html", {"tipo_usuario": tipo_usuario,"categorias": categorias_default})
+    return render(request, "cadastro_evento.html", {"tipo_usuario": tipo_usuario,"categorias": categorias_default})
