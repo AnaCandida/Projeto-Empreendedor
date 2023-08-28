@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from core.models import Usuario
+from core.models import Usuario, Evento, Categoria
 from django.contrib import messages
 
 
@@ -25,22 +25,19 @@ def cadastrar_usuario(request):
     if request.method == "POST":
         form_usuario = UserCreationForm(request.POST)
         if form_usuario.is_valid():
-            user = form_usuario.save()
-            django_user = user
             nome = request.POST.get("nome")
             email = request.POST.get("email")
             telefone = request.POST.get("telefone")
             whatsapp = request.POST.get("telefone")
             tipo_usuario = request.POST.get("user_type")
             razao_social = request.POST.get("razao_social")
-
             selected_categories = request.POST.getlist("pref_categorias[]")
-            pref_categorias = {}
-            for category in selected_categories:
-                pref_categorias[category] = True
 
             try:
                 print("vou salvar cadastro")
+
+                user = form_usuario.save()
+                django_user = user
                 cadastro_user = Usuario.objects.create(
                     django_user=user,
                     nome=nome,
@@ -48,9 +45,10 @@ def cadastrar_usuario(request):
                     whats=telefone,
                     tipo_usuario=tipo_usuario,
                     razao_social=razao_social,
-                    pref_categorias=pref_categorias,
+                    pref_categorias=selected_categories,
                 )
             except Exception as e:
+                print("nao salvou user")
                 print(e)
 
             login(request, user)
@@ -64,8 +62,14 @@ def cadastrar_usuario(request):
                 {"form_usuario": form_usuario, "erros_formulario": erros_formulario},
             )
     else:
+        categorias_disponiveis = Categoria.objects.all()
+
         form_usuario = UserCreationForm()
-        return render(request, "cadastro.html", {"form_usuario": form_usuario})
+        return render(
+            request,
+            "cadastro_usuario.html",
+            {"form_usuario": form_usuario, "categorias": categorias_disponiveis},
+        )
 
 
 def logar_usuario(request):
@@ -77,7 +81,9 @@ def logar_usuario(request):
             login(request, usuario)
             return redirect("listar_eventos")
         else:
-            form_login = AuthenticationForm()
+            form_login = AuthenticationForm(
+                request, data=request.POST
+            )  # Passar o data=request.POST aqui
             messages.error(request, MSG_ERROR_AUTHENTICATION)
     else:
         form_login = AuthenticationForm()
@@ -91,14 +97,10 @@ def deslogar_usuario(request):
     return redirect("index")
 
 
-def criar_evento(request):
-    return render(request, "criar_evento.html")
-
-
 def listar_eventos(request):
     tipo_usuario = None
     if request.user.is_authenticated:
-        print("autenticado")
+        print("autenticado", request.user)
         usuario = Usuario.objects.filter(django_user=request.user).first()
         if usuario:
             tipo_usuario = usuario.tipo_usuario
@@ -106,52 +108,77 @@ def listar_eventos(request):
     return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
 
 
-def cadastrar_evento(request):
-    if request.method == "POST":
-        form_evento = EventoCreationForm(request.POST)
-        if form_evento.is_valid():
-            #evento = form_evento.save()
+@login_required
+def meus_eventos(request):
+    usuario = Usuario.objects.filter(django_user=request.user).first()
+    tipo_usuario = usuario.tipo_usuario
 
-            django_user = user
-                        
-            nome_evento = request.POST.get("nome_evento")
-            descricao = request.POST.get("descricao")
-            horario =  request.POST.get("horario")
-            localizacao = request.POST.get("localizacao")
-            preco_ingressos = request.POST.get("preco_ingressos")
-            imagem = request.POST.get("imagem")
-            categoria = request.POST.get("categoria")
-            organizador = request.user
+    eventos = Evento.objects.filter(organizador_id=usuario)
 
-            try:
-                print("Evento cadastrado com sucesso")
-                criar_evento = Evento.objects.create(
-                    django_user=user,
-                    nome=nome_evento,
-                    descricao=descricao,
-                    foto=imagem,
-                    organizador_id=organizador,
-                    preco=preco_ingressos,
-                    horario=pref_categorias,
-                    localizacao = localizacao,
-                    categorias_id = categoria,
-                )
-            except Exception as e:
-                print(e)       
-
-            form_evento.save()
-
-            return redirect("listar_eventos")  # Redirecione para a lista de eventos após o cadastro
-
-        else:
-            erros_formulario = form_evento.errors
-            return render(
-                request,
-                "criar_evento.html",
-                {"form_evento": form_evento, "erros_formulario": erros_formulario},
-            )    
+    if eventos.exists():
+        context = {
+            "eventos": eventos,
+            "tipo_usuario": tipo_usuario,
+        }  # Passar 'tipo_usuario' no contexto
+        return render(request, "meus_eventos.html", context)
     else:
-        form_evento = EventoCreationForm()
+        error_message = "Você ainda não cadastrou nenhum evento."
+        context = {
+            "error_message": error_message,
+            "tipo_usuario": tipo_usuario,
+        }  # Passar 'tipo_usuario' no contexto
+        return render(request, "meus_eventos.html", context)
 
-    return render(request, "criar_evento.html", {"form_evento": form_evento})
 
+def cadastrar_evento(request):
+    categorias_default = Categoria.objects.all()
+    tipo_usuario = None
+    if request.method == "POST":
+        nome_evento = request.POST.get("nome_evento")
+        descricao = request.POST.get("descricao_evento")
+        user = request.user
+        horario = request.POST.get("data_evento")
+        localizacao = request.POST.get("endereco_evento")
+        preco_ingressos = request.POST.get("preco_evento")
+        foto = request.FILES.get("image")
+        categorias = request.POST.getlist("pref_categorias[]")
+
+        organizador = Usuario.objects.get(django_user=user)
+        try:
+            criar_evento = Evento.objects.create(
+                nome=nome_evento,
+                descricao=descricao,
+                organizador_id=organizador,
+                horario=horario,
+                localizacao=localizacao,
+                preco=preco_ingressos if preco_ingressos else 0,
+                foto=foto,
+            )
+
+            criar_evento.categorias_id.set(categorias)
+            print("Evento cadastrado com sucesso")
+            return redirect(
+                "listar_eventos"
+            )  # Redirecione para a lista de eventos após o cadastro
+        except Exception as e:
+            print("ERROR")
+            print(e)
+
+    else:
+        tipo_usuario = None
+        if request.user.is_authenticated:
+            print("autenticado", request.user)
+            usuario = Usuario.objects.filter(django_user=request.user).first()
+            if usuario:
+                tipo_usuario = usuario.tipo_usuario
+
+    return render(
+        request,
+        "cadastro_evento.html",
+        {"tipo_usuario": tipo_usuario, "categorias": categorias_default},
+    )
+
+
+# def editar_evento(request, event_id):
+
+#     return render(request, "cadastro_evento.html", {"tipo_usuario": tipo_usuario,"categorias": categorias_default})
