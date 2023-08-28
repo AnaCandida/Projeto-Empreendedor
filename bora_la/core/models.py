@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django import forms
+from django.contrib.postgres.fields import ArrayField
 
 
 class Categoria(models.Model):
@@ -9,8 +10,11 @@ class Categoria(models.Model):
     """
 
     nome = models.CharField(
-        max_length=255, blank=False, null=False, help_text="Nome do usuário."
+        max_length=255, blank=False, null=False, help_text="Nome da categoria"
     )
+
+    def __str__(self):
+        return self.nome
 
 
 class Usuario(models.Model):
@@ -50,11 +54,15 @@ class Usuario(models.Model):
     notificacoes = models.BooleanField(
         default=True, help_text="Preferência de notificações para o usuário."
     )
-    pref_categorias = models.JSONField(
-        default=dict,
+
+    pref_categorias = ArrayField(
+        models.CharField(max_length=50),
         blank=True,
-        help_text="Preferências de categorias em formato JSON.",
+        null=True,
+        size=4,
+        help_text="Preferências de categorias em lista",
     )
+
     tipo_usuario = models.IntegerField(
         choices=TIPOS_USUARIO,
         default=1,
@@ -73,21 +81,26 @@ class Usuario(models.Model):
 
 class Evento(models.Model):
     """
-    Modelo para representar uma categoria.
+    Modelo para representar uma evento.
     """
 
     nome = models.CharField(
         max_length=255, blank=False, null=False, help_text="Nome do evento."
     )
     descricao = models.TextField(null=False)
-    foto = models.CharField(max_length=255)  # Deve ser alterado para o tipo adequado
+    foto = models.ImageField(
+        upload_to="event_photos/",  # Define o caminho onde as imagens serão armazenadas
+        blank=True,
+        null=True,
+        help_text="Foto representativa do evento (JPEG, até 5MB, 1200x1200px)",
+    )
     organizador_id = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     preco = models.DecimalField(
         max_digits=10, decimal_places=2, null=False
     )  # Alterado para DecimalField
     horario = models.DateTimeField(null=False)
     localizacao = models.TextField(null=False)
-    categorias_id = models.JSONField(null=False)
+    categorias_id = models.ManyToManyField(Categoria)
 
 
 class Notificacao(models.Model):
