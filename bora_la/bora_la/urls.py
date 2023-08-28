@@ -1,29 +1,22 @@
-"""
-URL configuration for bora_la project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from core.views import *
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("logar_usuario", logar_usuario, name="logar_usuario"),
     path("deslogar_usuario", deslogar_usuario, name="deslogar_usuario"),
     path("cadastrar_usuario", cadastrar_usuario, name="cadastrar_usuario"),
-    path("criar_evento", criar_evento, name="criar_evento"),
+    path("cadastrar_evento", cadastrar_evento, name="cadastrar_evento"),
     path("listar_eventos", listar_eventos, name="listar_eventos"),
+    path("meus_eventos", meus_eventos, name="meus_eventos"),
+    path("editar_evento", editar_evento, name="editar_evento"),
+
     path("", index, name="index"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

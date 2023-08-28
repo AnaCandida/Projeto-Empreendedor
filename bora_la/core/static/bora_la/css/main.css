@@ -1,5 +1,7 @@
 /* Add this CSS in your main.css or a custom stylesheet */
 
+
+/* FORMULARIOS */
 /* Remove the default focus effect for input elements */
 .form-control:focus,
 .form-control.focus,
@@ -13,5 +15,39 @@
     font-size: smaller;
     white-space: nowrap; /* Impede que o texto quebre em várias linhas */
 
+}
+.no-spin::-webkit-inner-spin-button,
+.no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.no-spin {
+    -moz-appearance: textfield;
+}
 
+
+/* PAGINA */
+/* Cor de fundo verde claro */
+.color-background {
+    background-color: #f3f3f3; /* Substitua pela cor de sua preferência */
+
+}
+
+/* RODAPE */
+footer {
+    position: fixed;
+    margin-top: 10px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5%;
+    background-color: #f8f9fa; /* Cor de fundo do footer */
+    padding: 1rem 0; /* Espaçamento interno do footer */
+    color: #333; /* Cor do texto no footer */
+    z-index: 0; /* Define a ordem de sobreposição */
+    font-size: smaller;
+    /* Centraliza o texto verticalmente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
