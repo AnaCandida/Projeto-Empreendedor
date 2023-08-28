@@ -68,6 +68,8 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
 
     python manage.py createsuperuser --username=admin --email=admin@example.com
     use a senha padrao "admin" e digite "y" no bypass de segurança
+    python manage.py shell < populate_db.py
+    para popular o banco com as categorias default
     Por fim, inicie o servidor:
     python manage.py runserver 0.0.0.0:8000
     ```
