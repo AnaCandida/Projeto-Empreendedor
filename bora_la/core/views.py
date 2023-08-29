@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from core.models import Usuario, Evento, Categoria
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 
 
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
@@ -133,7 +134,7 @@ def meus_eventos(request):
 def cadastrar_evento(request):
     categorias_default = Categoria.objects.all()
     tipo_usuario = None
-    if request.method == "POST":
+    if request.method == "POST":        
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
         user = request.user
@@ -179,6 +180,32 @@ def cadastrar_evento(request):
     )
 
 
-def editar_evento(request, event_id):
+def editar_evento(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    if request.method == "POST":
+        #form_evento = EventoCreationForm(request.POST, request.FILES, instance=evento)
+        nome_evento = request.POST.get("nome_evento")
+        descricao = request.POST.get("descricao_evento")
+        horario = request.POST.get("data_evento")
+        localizacao = request.POST.get("endereco_evento")
+        preco_ingressos = request.POST.get("preco_evento")
+        foto = request.FILES.get("image")
+        categorias = request.POST.getlist("pref_categorias[]")
+        try:
+            editar_evento = Evento.objects.update(
+                nome=nome_evento,
+                descricao=descricao,
+                horario=horario,
+                localizacao=localizacao,
+                preco=preco_ingressos if preco_ingressos else 0,
+                foto=foto,                
+            )
+            editar_evento.categorias_id.set(categorias)
+
+            return redirect("listar_eventos")  # Redirecione para a lista de eventos após a edição
+        except Exception as e:
+            print("ERROR")
+            print(e)
 
     return render(request, "cadastro_evento.html", {"tipo_usuario": tipo_usuario,"categorias": categorias_default})
