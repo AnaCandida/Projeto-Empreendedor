@@ -68,7 +68,7 @@ def cadastrar_usuario(request):
         form_usuario = UserCreationForm()
         return render(
             request,
-            "cadastro_usuario.html",
+            "cadastro.html",
             {"form_usuario": form_usuario, "categorias": categorias_disponiveis},
         )
 
