@@ -23,6 +23,9 @@ def index(request):
     return render(request, "index.html")
 
 
+
+
+
 def cadastrar_usuario(request):
     if request.method == "POST":
         form_usuario = UserCreationForm(request.POST)
@@ -99,15 +102,15 @@ def deslogar_usuario(request):
     return redirect("index")
 
 
-def listar_eventos(request):
-    tipo_usuario = None
-    if request.user.is_authenticated:
-        print("autenticado", request.user)
-        usuario = Usuario.objects.filter(django_user=request.user).first()
-        if usuario:
-            tipo_usuario = usuario.tipo_usuario
+#def listar_eventos(request):
+    #tipo_usuario = None
+    #if request.user.is_authenticated:
+       # print("autenticado", request.user)
+        #usuario = Usuario.objects.filter(django_user=request.user).first()
+        #if usuario:
+            #tipo_usuario = usuario.tipo_usuario
 
-    return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
+    #return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
 
 
 @login_required
@@ -182,18 +185,28 @@ def cadastrar_evento(request):
         {"tipo_usuario": tipo_usuario, "categorias": categorias_default},
     )
 
-def editar_evento(request, evento_id = 1):
-    evento = get_object_or_404(Evento, id=evento_id)
+
+def listar_eventos(request):
+    eventos = Evento.objects.all()
+    return render (request, 'listar_eventos.html', {'eventos' : eventos})
+
+def evento_view(request, id):
+    evento = get_object_or_404(Evento, pk=id)
+    return render(request, "editar_evento.html",{"evento":evento})
+
+
+def editar_evento(request, id):
+    evento = get_object_or_404(Evento, pk=id)
     
-    if request.method == "PUT":
+    if request.method == "POST":
         #form_evento = EventoCreationForm(request.POST, request.FILES, instance=evento)
-        nome_evento = request.PUT.get("nome_evento")
-        descricao = request.PUT.get("descricao_evento")
-        horario = request.PUT.get("data_evento")
-        localizacao = request.PUT.get("endereco_evento")
-        preco_ingressos = request.PUT.get("preco_evento")
+        nome_evento = request.POST.get("nome_evento")
+        descricao = request.POST.get("descricao_evento")
+        horario = request.POST.get("data_evento")
+        localizacao = request.POST.get("endereco_evento")
+        preco_ingressos = request.POST.get("preco_evento")
         foto = request.FILES.get("image")
-        categorias = request.PUT.getlist("pref_categorias[]")
+        categorias = request.POST.getlist("pref_categorias[]")
         try:
             editar_evento = Evento.objects.update(
                 nome=nome_evento,
