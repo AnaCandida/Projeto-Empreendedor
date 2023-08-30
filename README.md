@@ -78,7 +78,10 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
 Se der erro, tente restartar ambos os containers.
 Para a area admin, lembre-se de usar o user admin com a senha admin que vc recem criou. 
 
-
+7. Para rodar os testes dentro do container, rode no seu terminal:
+    ```
+    docker exec projeto-empreendedor-bora_la-1 pytest -vv
+    ```
 ### Comandos úteis do Docker
 
 1. Para ver os logs do container, utilize o seguinte comando ou o plugin do docker:
