@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required
 from core.models import Usuario, Evento, Categoria
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-
+import pprint
+from decimal import Decimal
 
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
@@ -141,9 +142,10 @@ def cadastrar_evento(request):
         horario = request.POST.get("data_evento")
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
+        preco_ingressos = preco_ingressos.replace(',','.')
+        preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
-
         organizador = Usuario.objects.get(django_user=user)
         try:
             criar_evento = Evento.objects.create(
@@ -158,6 +160,7 @@ def cadastrar_evento(request):
 
             criar_evento.categorias_id.set(categorias)
             print("Evento cadastrado com sucesso")
+            pprint.pprint(criar_evento.__dict__)
             return redirect(
                 "listar_eventos"
             )  # Redirecione para a lista de eventos após o cadastro
