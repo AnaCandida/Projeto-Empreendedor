@@ -5,6 +5,7 @@ from core.views import *
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("logar_usuario", logar_usuario, name="logar_usuario"),
@@ -13,7 +14,7 @@ urlpatterns = [
     path("cadastrar_evento", cadastrar_evento, name="cadastrar_evento"),
     path("listar_eventos", listar_eventos, name="listar_eventos"),
     path("meus_eventos", meus_eventos, name="meus_eventos"),
-    path("editar_evento/<int:evento_id>/", editar_evento, name="editar_evento"), 
+    path('editar_evento/<int:id>', evento_view, name="editar_evento"),
 
     path("", index, name="index"),
 ]
