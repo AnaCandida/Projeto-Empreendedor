@@ -197,16 +197,17 @@ def evento_view(request, id):
 
 def editar_evento(request, id):
     evento = get_object_or_404(Evento, pk=id)
-    
+    #categorias_default = Categoria.objects.all()       
     if request.method == "POST":
-        #form_evento = EventoCreationForm(request.POST, request.FILES, instance=evento)
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
+        user = request.user
         horario = request.POST.get("data_evento")
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         foto = request.FILES.get("image")
-        categorias = request.POST.getlist("pref_categorias[]")
+        #categorias = request.POST.getlist("pref_categorias[]")
+        organizador = Usuario.objects.get(django_user=user)
         try:
             editar_evento = Evento.objects.update(
                 nome=nome_evento,
@@ -214,14 +215,18 @@ def editar_evento(request, id):
                 horario=horario,
                 localizacao=localizacao,
                 preco=preco_ingressos if preco_ingressos else 0,
-                foto=foto,                
+                foto=foto,
+                organizador_id=organizador,                
             )
-            editar_evento.categorias_id.set(categorias)
-            print("Evento alterado com sucesso")
-
-            return redirect("listar_eventos")  # Redirecione para a lista de eventos após a edição
+            #editar_evento.categorias_id.set(categorias)
+            evento.save()
+            print("Evento alterado com sucesso") 
+            #pprint.pprint(editar_evento.__dict__)           
+            return redirect(
+                "listar_eventos"
+            )  # Redirecione para a lista de eventos após o cadastro
         except Exception as e:
             print("ERROR")
             print(e)
 
-    return render(request, "editar_evento.html")
+    return render(request, "editar_evento.html",{"evento":evento})

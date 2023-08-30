@@ -4,6 +4,16 @@
 {% block title %}Editar Evento{% endblock %}
 
 {% block content %}
+
+<!-- Bloco para inserção do botão de voltar -->
+{% block back_button %}
+<div class="position-relative">
+    <a href="{% url 'listar_eventos' %}" class="btn btn-success">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+{% endblock %}
+
    <div class="container mt-5">
       <div class="row justify-content-center">
          <div class="col-md-8">
@@ -21,6 +31,16 @@
                <div class="mb-3">
                   <label for="descricao_evento" class="form-label">Descrição do Evento</label>
                   <textarea class="form-control" id="descricao_evento" name="descricao_evento">{{ evento.descricao }}</textarea>
+               </div>
+               
+               <div class="mb-3">
+                  <label for="data_evento">Data e horário de início:</label>
+                  <input type="datetime-local" class="form-control" name="data_evento" id="data_evento" value="{{evento.horario}}">
+               </div>
+
+               <div class="form-group mb-3">
+                  <label for="nome_evento">Endereço:</label>
+                  <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" value="{{evento.localizacao}}">
                </div>
 
                <!-- Outros campos de edição do evento ... -->

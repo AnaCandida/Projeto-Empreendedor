@@ -4,6 +4,8 @@
 
 {% block content %}
 
+
+
 <div class="container mt-5">
     <div class="offset-1 col10 list-div">
         <h1>Listagem de Eventos</h1>
@@ -17,18 +19,6 @@
             {% for evento in eventos %}
             <li class="evento-item">
                 <span><a href="/editar_evento/{{evento.id}}"> {{evento.id}} {{evento.nome}}</a></span>
-            </li>
-            <li class="evento-item">
-                <span>Nome do Evento</span>
-            </li>
-            <li class="evento-item">
-                <span>Nome do Evento</span>
-            </li>
-            <li class="evento-item">
-                <span>Nome do Evento</span>
-            </li>
-            <li class="evento-item">
-                <span>Nome do Evento</span>
             </li>
             {% endfor%}
         </div>
