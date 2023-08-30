@@ -24,13 +24,14 @@
     
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <!-- Bloco para inserção do botão de voltar -->
-        {% block back_button %}
+        {% block home_button %}
         <div class="position-relative">
             <a href="{% url 'index' %}" class="btn btn-success">
                 <i class="bi bi-arrow-left"></i> Voltar
             </a>
         </div>
         {% endblock %}
+ 
         <!-- Bloco para inserção do menu -->
 
         <div class="container">
@@ -40,7 +41,6 @@
                     <!-- <img src="{% static 'bora_la/images/logo.png' %}" alt="Bora La logo" class="me-2" style="max-width: 10%;"> -->
                     <!-- <span>Bora La</span> -->
                 </a>
-
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

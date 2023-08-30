@@ -7,7 +7,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from core.models import Usuario, Evento, Categoria
 from django.contrib import messages
-
+from django.shortcuts import get_object_or_404
+import pprint
+from decimal import Decimal
 
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
@@ -19,6 +21,9 @@ MSG_ERROR_AUTHENTICATION = (
 
 def index(request):
     return render(request, "index.html")
+
+
+
 
 
 def cadastrar_usuario(request):
@@ -67,7 +72,7 @@ def cadastrar_usuario(request):
         form_usuario = UserCreationForm()
         return render(
             request,
-            "cadastro_usuario.html",
+            "cadastro.html",
             {"form_usuario": form_usuario, "categorias": categorias_disponiveis},
         )
 
@@ -97,15 +102,15 @@ def deslogar_usuario(request):
     return redirect("index")
 
 
-def listar_eventos(request):
-    tipo_usuario = None
-    if request.user.is_authenticated:
-        print("autenticado", request.user)
-        usuario = Usuario.objects.filter(django_user=request.user).first()
-        if usuario:
-            tipo_usuario = usuario.tipo_usuario
+#def listar_eventos(request):
+    #tipo_usuario = None
+    #if request.user.is_authenticated:
+       # print("autenticado", request.user)
+        #usuario = Usuario.objects.filter(django_user=request.user).first()
+        #if usuario:
+            #tipo_usuario = usuario.tipo_usuario
 
-    return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
+    #return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
 
 
 @login_required
@@ -133,16 +138,17 @@ def meus_eventos(request):
 def cadastrar_evento(request):
     categorias_default = Categoria.objects.all()
     tipo_usuario = None
-    if request.method == "POST":
+    if request.method == "POST":        
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
         user = request.user
         horario = request.POST.get("data_evento")
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
+        preco_ingressos = preco_ingressos.replace(',','.')
+        preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
-
         organizador = Usuario.objects.get(django_user=user)
         try:
             criar_evento = Evento.objects.create(
@@ -157,6 +163,7 @@ def cadastrar_evento(request):
 
             criar_evento.categorias_id.set(categorias)
             print("Evento cadastrado com sucesso")
+            pprint.pprint(criar_evento.__dict__)
             return redirect(
                 "listar_eventos"
             )  # Redirecione para a lista de eventos após o cadastro
@@ -179,6 +186,47 @@ def cadastrar_evento(request):
     )
 
 
-def editar_evento(request, event_id):
+def listar_eventos(request):
+    eventos = Evento.objects.all()
+    return render (request, 'listar_eventos.html', {'eventos' : eventos})
 
-    return render(request, "cadastro_evento.html", {"tipo_usuario": tipo_usuario,"categorias": categorias_default})
+def evento_view(request, id):
+    evento = get_object_or_404(Evento, pk=id)
+    return render(request, "editar_evento.html",{"evento":evento})
+
+
+def editar_evento(request, id):
+    evento = get_object_or_404(Evento, pk=id)
+    #categorias_default = Categoria.objects.all()       
+    if request.method == "POST":
+        nome_evento = request.POST.get("nome_evento")
+        descricao = request.POST.get("descricao_evento")
+        user = request.user
+        horario = request.POST.get("data_evento")
+        localizacao = request.POST.get("endereco_evento")
+        preco_ingressos = request.POST.get("preco_evento")
+        foto = request.FILES.get("image")
+        #categorias = request.POST.getlist("pref_categorias[]")
+        organizador = Usuario.objects.get(django_user=user)
+        try:
+            editar_evento = Evento.objects.update(
+                nome=nome_evento,
+                descricao=descricao,
+                horario=horario,
+                localizacao=localizacao,
+                preco=preco_ingressos if preco_ingressos else 0,
+                foto=foto,
+                organizador_id=organizador,                
+            )
+            #editar_evento.categorias_id.set(categorias)
+            evento.save()
+            print("Evento alterado com sucesso") 
+            #pprint.pprint(editar_evento.__dict__)           
+            return redirect(
+                "listar_eventos"
+            )  # Redirecione para a lista de eventos após o cadastro
+        except Exception as e:
+            print("ERROR")
+            print(e)
+
+    return render(request, "editar_evento.html",{"evento":evento})

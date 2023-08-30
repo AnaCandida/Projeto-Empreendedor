@@ -1,34 +1,32 @@
 <!-- CADASTRO DE EVENTO -->
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
 <style>
-    .image-upload {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .image-preview {
-        margin-top: 10px;
-        width: 200px;
-        height: 200px;
-        border: 1px solid #ccc;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        background-size: cover;
-        background-position: center;
-    }
-
-    .image-preview img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
+   .image-upload {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   }
+   .image-preview {
+   margin-top: 10px;
+   width: 200px;
+   height: 200px;
+   border: 1px solid #ccc;
+   display: flex;
+   justify-content: center;
+   align-items: flex-end;
+   background-size: cover;
+   background-position: center;
+   }
+   .image-preview img {
+   max-width: 100%;
+   max-height: 100%;
+   object-fit: contain;
+   }
 </style>
 <div class="container mt-5 mb-4">
+<<<<<<< HEAD
         <div class="row justify-content-center align-items-start">
             <div class="col-md-8">
                 <div class="card shadow py-3 px-3">
@@ -97,72 +95,150 @@
                         </form>
                     </div>
                 </div>
+=======
+   <div class="row justify-content-center align-items-start">
+      <div class="col-md-8">
+         <div class="card shadow py-3 px-3">
+            <div class="card-body">
+               <h2 class="text-center mb-4">Cadastrar Evento</h2>
+               <form method="post" action="{% url 'cadastrar_evento' %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="image-upload">
+                     <label for="image">Escolha uma capa para o evento:</label>
+                     <input type="file" name="image" id="image" accept="image/jpeg" onchange="previewImage(event)" required>
+                     <div class="image-preview"id="imagePreview" style="width:80%">
+                        <img src="#" alt="Preview">
+                     </div>
+                  </div>
+                  <div class="form-group mb-3">
+                     <label for="nome_evento">Nome do evento:</label>
+                     <input type="text" class="form-control" name="nome_evento" id="nome_evento" required>
+                  </div>
+                  <div class="form-group mb-3">
+                     <label for="descricao_evento">Descrição:</label>
+                     <textarea class="form-control" name="descricao_evento" id="descricao_evento" rows="4" required></textarea>
+                  </div>
+                  <div class="form-group mb-3">
+                     <label for="preco_evento">Valor dos ingressos</label>
+                     <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00" required>
+                     </div>
+                     <div class="invalid-feedback" id="precoError">Apenas valores numéricos são permitidos.</div>
+                  </div>
+                  <div class="form-check mb-3">
+                     <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
+                     <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
+                  </div>
+                  <div class="form-group mb-3">
+                     <label for="data_evento">Data e horário de início:</label>
+                     <input type="datetime-local" class="form-control" name="data_evento" id="data_evento" required>
+                  </div>
+                  <div class="form-group mb-3">
+                     <label for="nome_evento">Endereço:</label>
+                     <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" required>
+                  </div>
+                  <div class="form-group mb-4">
+                     <label for="pref_categorias">Categorias do evento (até 4):</label>
+                     <div class="form-check">
+                        {% for categoria in categorias %}
+                        <div class="form-check">
+                           <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}">
+                           <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
+                        </div>
+                        {% endfor %}
+                     </div>
+                  </div>
+                  <div class="form-group d-grid">
+                     <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
+                  </div>
+               </form>
+>>>>>>> d1c3385a2878cd19d7d4e5ec1cd69d4baafa416d
             </div>
-        </div>
+         </div>
+      </div>
+   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+   function previewImage(event) {
+       const imagePreview = document.getElementById('imagePreview');
+       const image = imagePreview.querySelector('img');
+       image.src = URL.createObjectURL(event.target.files[0]);
+       image.style.display = 'block';
+   }
+   
+   function containsOnlyNumbers(str) {
+       str = str.replace(',','')
+       str = str.replace('.','')
+   
+       return /^[0-9]+$/.test(str);
+   }
+   function formatCurrency(value) {
+       return parseFloat(value).toLocaleString('pt-br', {minimumFractionDigits: 2});
+   }
+   
+   
+   $(document).ready(function() {
+       let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
+       let maxChecked = 4;
+   
+       checkboxes.forEach(function(checkbox) {
+           checkbox.addEventListener('change', function() {
+               var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
+   
+               if (checkedCount > maxChecked) {
+                   this.checked = false;
+               } else {
+                   checkboxes.forEach(function(cb) {
+                       if (!cb.checked && checkedCount >= maxChecked) {
+                           cb.disabled = true;
+                       } else {
+                           cb.disabled = false;
+                       }
+                   });
+               }
+           });
+       });
+       });
+   
+       const input = document.getElementById("preco_evento");
+       const gratuitoCheckbox = document.getElementById("gratuitoCheckbox");
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+       input.addEventListener("blur", function() {
+           if (containsOnlyNumbers(this.value) != true){
+               console.log(typeof(this.value))
+               this.value = ""
+               precoError.style.display = "block";
+   
+           }else{
+               
+               precoError.style.display = "none";
+               this.value = this.value.replace(',','.')
+               // console.log(this.value)
+               let formattedValue = formatCurrency(this.value);
+               this.value = this.value.replace(',','.')
 
-    <script>
-        function previewImage(event) {
-            const imagePreview = document.getElementById('imagePreview');
-            const image = imagePreview.querySelector('img');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            image.style.display = 'block';
+               this.value = formattedValue; // Atualiza o elemento com o valor formatado
+                console.log(this.value)
+           }
+       });
+   
+
+       gratuitoCheckbox.addEventListener("change", function() {
+        if (this.checked) {
+            input.value = "0.00"; // Define o valor como zero
+            input.disabled = true; // Desabilita o campo de valor
+            precoError.style.display = "none"; // Esconde a mensagem de erro, se estiver visível
+        } else {
+            input.disabled = false; // Habilita o campo de valor
         }
-
-        $(document).ready(function() {
-            var checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
-    var maxChecked = 4;
-
-    checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
-
-            if (checkedCount > maxChecked) {
-                this.checked = false;
-            } else {
-                checkboxes.forEach(function(cb) {
-                    if (!cb.checked && checkedCount >= maxChecked) {
-                        cb.disabled = true;
-                    } else {
-                        cb.disabled = false;
-                    }
-                });
-            }
         });
-    });
-        });
-
-        document.getElementById("gratuitoCheckbox").addEventListener("change", function() {
-        const precoInput = document.getElementById("preco_evento");
-        precoInput.value = ""; // Limpa o campo de preço ao marcar/desmarcar "Gratuito"
-        precoInput.disabled = this.checked; // Desativa o campo de preço se "Gratuito" estiver marcado
-    });
-            // Formatação e validação customizada para o preço do ingresso
-
-    const precoInput = document.getElementById("preco_evento");
-        // Limpa o valor ao focar no campo
-        precoInput.addEventListener("focus", function() {
-            this.value = "";
-        });
-    // Formatação e validação ao perder o foco no campo
-    precoInput.addEventListener("blur", function() {
-            const value = this.value.replace(".", "").replace(",", ".");
-            if (value === "" || isNaN(value) || parseFloat(value) > 1000) {
-                this.value = "";
-            } else {
-                const floatValue = parseFloat(value);
-                const formattedValue = floatValue.toLocaleString("pt-BR", {
-                    // style: "currency",
-                    currency: "BRL",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                });
-                this.value = formattedValue;
-            }
-        });
-    </script>
+   // Ao enviar o formulário
+   document.querySelector("form").addEventListener("submit", function(event) {
+       const precoInput = document.getElementById("preco_evento");
+   });
+   
+</script>
 {% endblock %}
-

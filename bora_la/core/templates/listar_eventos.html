@@ -4,7 +4,24 @@
 
 {% block content %}
 
+
+
 <div class="container mt-5">
-    <h1>Listagem de eventos</h1>
+    <div class="offset-1 col10 list-div">
+        <h1>Listagem de Eventos</h1>
+        <div class="col-10 add-div">
+            Adicionar Evento
+        </div>
+        <div class="col-9 search-div">
+            <input type="text" id="search" name="search" placeholder="Digite o nome do evento para buscar">            
+        </div>
+        <div class="listar-eventos">
+            {% for evento in eventos %}
+            <li class="evento-item">
+                <span><a href="/editar_evento/{{evento.id}}"> {{evento.id}} {{evento.nome}}</a></span>
+            </li>
+            {% endfor%}
+        </div>
+    </div>
 </div>
 {% endblock %}
