@@ -88,9 +88,7 @@ def logar_usuario(request):
             login(request, usuario)
             return redirect("listar_eventos")
         else:
-            form_login = AuthenticationForm(
-                request, data=request.POST
-            )  # Passar o data=request.POST aqui
+            form_login = AuthenticationForm(request, data=request.POST)
             messages.error(request, MSG_ERROR_AUTHENTICATION)
     else:
         form_login = AuthenticationForm()
@@ -196,6 +194,9 @@ def evento_view(request, id):
 
 
 def editar_evento(request, id):
+    tipo_usuario = None
+    categorias_default = Categoria.objects.all()
+
     evento = get_object_or_404(Evento, pk=id)
     # categorias_default = Categoria.objects.all()
     if request.method == "POST":
@@ -221,10 +222,14 @@ def editar_evento(request, id):
             print("Evento alterado com sucesso")
             # pprint.pprint(evento.__dict__)
             return redirect(
-                "listar_eventos"
+                "meus_eventos"
             )  # Redirecione para a lista de eventos após o cadastro
         except Exception as e:
             print("ERROR")
             print(e)
+    else:
+        if request.user.is_authenticated:
+            tipo_usuario = get_tipo_usuario(request.user)
 
-    return render(request, "editar_evento.html", {"evento": evento})
+    context = {"tipo_usuario": tipo_usuario if tipo_usuario else 0, "evento": evento, "categorias": categorias_default}
+    return render(request, "editar_evento.html", context)
