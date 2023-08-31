@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block title %}Cadastrar Evento{% endblock %}
+<!-- Bloco para inserção do botão de voltar para LISTAGEM -->
+{% block home_button %}
+<div class="position-relative">
+    <a href="{% url 'listar_eventos' %}" class="btn btn-success">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+{% endblock %}
 
 {% block content %}
 <style>
@@ -115,7 +123,7 @@
        let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
        let maxChecked = 4;
    
-       checkboxes.forEach(function(checkbox) {
+         checkboxes.forEach(function(checkbox) {
            checkbox.addEventListener('change', function() {
                var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
    
@@ -134,10 +142,10 @@
        });
        });
    
-       const input = document.getElementById("preco_evento");
-       const gratuitoCheckbox = document.getElementById("gratuitoCheckbox");
+         const input = document.getElementById("preco_evento");
+         const gratuitoCheckbox = document.getElementById("gratuitoCheckbox");
 
-       input.addEventListener("blur", function() {
+         input.addEventListener("blur", function() {
            if (containsOnlyNumbers(this.value) != true){
                console.log(typeof(this.value))
                this.value = ""
@@ -157,15 +165,26 @@
        });
    
 
-       gratuitoCheckbox.addEventListener("change", function() {
-        if (this.checked) {
-            input.value = "0.00"; // Define o valor como zero
-            input.disabled = true; // Desabilita o campo de valor
-            precoError.style.display = "none"; // Esconde a mensagem de erro, se estiver visível
-        } else {
-            input.disabled = false; // Habilita o campo de valor
-        }
-        });
+         gratuitoCheckbox.addEventListener("change", function() {
+            if (this.checked) {
+                  input.value = "0.00"; // Define o valor como zero
+                  input.disabled = true; // Desabilita o campo de valor
+                  precoError.style.display = "none"; // Esconde a mensagem de erro, se estiver visível
+            } else {
+                  input.disabled = false; // Habilita o campo de valor
+            }
+            });
+
+         // Atualiza o rótulo do arquivo quando um arquivo é selecionado
+         document.getElementById('image').addEventListener('change', function() {
+            const fileLabel = document.querySelector('label[for="image"]');
+            if (this.files.length > 0) {
+               fileLabel.textContent = 'Arquivo selecionado: ' + this.files[0].name;
+            } else {
+               fileLabel.textContent = 'Edite a capa do evento:';
+            }
+         });
+
    // Ao enviar o formulário
    document.querySelector("form").addEventListener("submit", function(event) {
        const precoInput = document.getElementById("preco_evento");

@@ -12,26 +12,74 @@
 {% endblock %}
 
 {% block content %}
+<style>
+   .image-upload {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   }
+   
 
+    .image-preview {
+   margin-top: 10px;
+   width: 200px;
+   height: 200px;
+   border: 1px solid #ccc;
+   display: flex;
+   justify-content: center;
+   align-items: flex-end;
+   background-size: cover;
+   background-position: center;
+   }
+   .image-preview img {
+   max-width: 100%;
+   max-height: 100%;
+   object-fit: contain;
+   }
+</style>
 
-   <div class="container mt-5">
-      <div class="row justify-content-center">
-         <div class="col-md-8">
-            <h1 class="mb-4">Editar Evento</h1>
+<div class="container mt-5 mb-4">
+   <div class="row justify-content-center align-items-start">
+      <div class="col-md-8">
+         <div class="card shadow py-3 px-3">
+            <div class="card-body">
+               <h2 class="text-center mb-4">Editar Evento</h2>
 
-            <form method="post" enctype="multipart/form-data">
+            <form method="post"  enctype="multipart/form-data">
                {% csrf_token %}
 
                <!-- Campos de edição do evento -->
-               <div class="mb-3">
-                  <label for="nome_evento" class="form-label">Nome do Evento</label>
-                  <input type="text" class="form-control" id="nome_evento" name="nome_evento" value="{{ evento.nome }}">
+               <div class="image-upload">
+                  <label for="image" style="text-align: left;">Foto atual:</label>
+                  <div class="image-preview"id="imagePreview" style="width:80%">
+                     <img src="{{ evento.foto.url }}" alt="Preview">
+                  </div>
+                  <input type="file" name="image" id="image" accept="image/jpeg" onchange="previewImage(event)" required>
+               </div>
+               <div class="form-group mb-3">
+                  <label for="nome_evento">Nome do evento:</label>
+                  <input type="text" class="form-control" id="nome_evento" name="nome_evento" value="{{ evento.nome }}" required>
+               </div>
+               <div class="form-group mb-3">
+                  <label for="descricao_evento">Descrição:</label>
+                  <textarea class="form-control" id="descricao_evento" name="descricao_evento" rows="4" value="{{ evento.descricao }}" required></textarea>
+
                </div>
 
-               <div class="mb-3">
-                  <label for="descricao_evento" class="form-label">Descrição do Evento</label>
-                  <textarea class="form-control" id="descricao_evento" name="descricao_evento">{{ evento.descricao }}</textarea>
+               <div class="form-group mb-3">
+                  <label for="preco_evento">Valor dos ingressos</label>
+                  <div class="input-group">
+                     <span class="input-group-text">R$</span>
+                     <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00" value="evento.preco" required>
+                  </div>
+                  <div class="invalid-feedback" id="precoError">Apenas valores numéricos são permitidos.</div>
                </div>
+               <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
+                  <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
+               </div>
+
+
                
                <div class="mb-3">
                   <label for="data_evento">Data e horário de início:</label>
@@ -43,11 +91,117 @@
                   <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" value="{{evento.localizacao}}">
                </div>
 
-               <!-- Outros campos de edição do evento ... -->
-
-               <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+               <div class="form-group mb-4">
+                  <label for="pref_categorias">Categorias do evento (até 4):</label>
+                  <div class="form-check">
+                     {% for categoria in evento.categorias %}
+                     
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}">
+                        <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
+                     </div>
+                     {% endfor %}
+                  </div>
+               </div>
+               <div class="form-group d-grid">
+                  <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Salvar</button>
+               </div>
             </form>
          </div>
       </div>
    </div>
+   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+   function previewImage(event) {
+       const imagePreview = document.getElementById('imagePreview');
+       const image = imagePreview.querySelector('img');
+       image.src = URL.createObjectURL(event.target.files[0]);
+       image.style.display = 'block';
+   }
+   
+   function containsOnlyNumbers(str) {
+       str = str.replace(',','')
+       str = str.replace('.','')
+   
+       return /^[0-9]+$/.test(str);
+   }
+   function formatCurrency(value) {
+       return parseFloat(value).toLocaleString('pt-br', {minimumFractionDigits: 2});
+   }
+   
+   
+   $(document).ready(function() {
+       let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
+       let maxChecked = 4;
+   
+       checkboxes.forEach(function(checkbox) {
+           checkbox.addEventListener('change', function() {
+               var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
+   
+               if (checkedCount > maxChecked) {
+                   this.checked = false;
+               } else {
+                   checkboxes.forEach(function(cb) {
+                       if (!cb.checked && checkedCount >= maxChecked) {
+                           cb.disabled = true;
+                       } else {
+                           cb.disabled = false;
+                       }
+                   });
+               }
+           });
+       });
+       });
+   
+       const input = document.getElementById("preco_evento");
+       const gratuitoCheckbox = document.getElementById("gratuitoCheckbox");
+
+       input.addEventListener("blur", function() {
+           if (containsOnlyNumbers(this.value) != true){
+               console.log(typeof(this.value))
+               this.value = ""
+               precoError.style.display = "block";
+   
+           }else{
+               
+               precoError.style.display = "none";
+               this.value = this.value.replace(',','.')
+               // console.log(this.value)
+               let formattedValue = formatCurrency(this.value);
+               this.value = this.value.replace(',','.')
+
+               this.value = formattedValue; // Atualiza o elemento com o valor formatado
+                console.log(this.value)
+           }
+       });
+   
+
+       gratuitoCheckbox.addEventListener("change", function() {
+        if (this.checked) {
+            input.value = "0.00"; // Define o valor como zero
+            input.disabled = true; // Desabilita o campo de valor
+            precoError.style.display = "none"; // Esconde a mensagem de erro, se estiver visível
+        } else {
+            input.disabled = false; // Habilita o campo de valor
+        }
+        });
+   
+         // Atualiza o rótulo do arquivo quando um arquivo é selecionado
+         document.getElementById('image').addEventListener('change', function() {
+            const fileLabel = document.querySelector('label[for="image"]');
+            if (this.files.length > 0) {
+               fileLabel.textContent = 'Arquivo selecionado: ' + this.files[0].name;
+            } else {
+               fileLabel.textContent = 'Capa atual';
+            }
+         });
+   
+        // Ao enviar o formulário
+   document.querySelector("form").addEventListener("submit", function(event) {
+       const precoInput = document.getElementById("preco_evento");
+   });
+   
+</script>
 {% endblock %}
