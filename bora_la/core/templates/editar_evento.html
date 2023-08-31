@@ -2,17 +2,17 @@
 {% load static %}
 
 {% block title %}Editar Evento{% endblock %}
-
-{% block content %}
-
-<!-- Bloco para inserção do botão de voltar -->
-{% block back_button %}
+<!-- Bloco para inserção do botão de voltar para LISTAGEM -->
+{% block home_button %}
 <div class="position-relative">
     <a href="{% url 'listar_eventos' %}" class="btn btn-success">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
 </div>
 {% endblock %}
+
+{% block content %}
+
 
    <div class="container mt-5">
       <div class="row justify-content-center">

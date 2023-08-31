@@ -1,6 +1,8 @@
-<!-- CADASTRO DE EVENTO -->
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}Cadastrar Evento{% endblock %}
+
 {% block content %}
 <style>
    .image-upload {
@@ -26,76 +28,6 @@
    }
 </style>
 <div class="container mt-5 mb-4">
-<<<<<<< HEAD
-        <div class="row justify-content-center align-items-start">
-            <div class="col-md-8">
-                <div class="card shadow py-3 px-3">
-                    <div class="card-body">
-                        <h2 class="text-center mb-4">Cadastrar Evento</h2>
-
-                        <form method="post" action="{% url 'cadastrar_evento' %}" enctype="multipart/form-data">
-                            {% csrf_token %}
-
-                            <div class="image-upload">
-                                <label for="image">Escolha uma capa para o evento:</label>
-                                <input type="file" name="image" id="image" accept="image/jpeg" onchange="previewImage(event)" required>
-                                <div class="image-preview"id="imagePreview" style="width:80%">
-                                    <img src="#" alt="Preview">
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="nome_evento">Nome do evento:</label>
-                                <input type="text" class="form-control" name="nome_evento" id="nome_evento" required>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="descricao_evento">Descrição:</label>
-                                <textarea class="form-control" name="descricao_evento" id="descricao_evento" rows="4" required></textarea>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="preco_evento">Valor dos ingressos</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00" pattern="\d+(\,\d{1,2})?" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
-                                <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
-                            </div>
-                            
-
-                            <div class="form-group mb-3">
-                                <label for="data_evento">Data e horário de início:</label>
-                                <input type="datetime-local" class="form-control" name="data_evento" id="data_evento" required>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="endereco_evento">Endereço:</label>
-                                <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" required>
-                            </div>
-
-                            <div class="form-group mb-4">
-                                <label for="pref_categorias">Categorias do evento (até 4):</label>
-                                <div class="form-check">
-                                    {% for categoria in categorias %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}">
-                                            <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-
-                            <div class="form-group d-grid">
-                                <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-=======
    <div class="row justify-content-center align-items-start">
       <div class="col-md-8">
          <div class="card shadow py-3 px-3">
@@ -153,7 +85,6 @@
                      <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Cadastrar</button>
                   </div>
                </form>
->>>>>>> d1c3385a2878cd19d7d4e5ec1cd69d4baafa416d
             </div>
          </div>
       </div>
