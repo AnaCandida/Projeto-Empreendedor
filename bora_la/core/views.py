@@ -22,8 +22,7 @@ MSG_ERROR_AUTHENTICATION = (
 def get_tipo_usuario(usuario):
     user = Usuario.objects.filter(django_user=usuario)
     print(user)
-    print(user[0])
-    return user[0].tipo_usuario if user[0] else None
+    return user[0].tipo_usuario if user else None
 
 
 def index(request):
