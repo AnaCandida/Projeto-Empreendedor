@@ -18,11 +18,12 @@ MSG_ERROR_AUTHENTICATION = (
     "Credenciais inválidas. Verifique seu nome de usuário e senha."
 )
 
+def get_tipo_usuario(usuario):
+    user =  Usuario.objects.get(django_user=usuario)
+    return user.tipo_usuario
 
 def index(request):
     return render(request, "index.html")
-
-
 
 
 
@@ -102,15 +103,17 @@ def deslogar_usuario(request):
     return redirect("index")
 
 
-#def listar_eventos(request):
-    #tipo_usuario = None
-    #if request.user.is_authenticated:
-       # print("autenticado", request.user)
-        #usuario = Usuario.objects.filter(django_user=request.user).first()
-        #if usuario:
-            #tipo_usuario = usuario.tipo_usuario
+def listar_eventos(request):
+    if request.user.is_authenticated:
+       tipo_usuario = get_tipo_usuario(request.user)
 
-    #return render(request, "listar_eventos.html", {"tipo_usuario": tipo_usuario})
+    eventos = Evento.objects.all()
+    context = {
+            "eventos": eventos,
+            "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+        }  # Passar 'tipo_usuario' no contexto
+
+    return render (request, 'listar_eventos.html', context)
 
 
 @login_required
@@ -186,9 +189,6 @@ def cadastrar_evento(request):
     )
 
 
-def listar_eventos(request):
-    eventos = Evento.objects.all()
-    return render (request, 'listar_eventos.html', {'eventos' : eventos})
 
 def evento_view(request, id):
     evento = get_object_or_404(Evento, pk=id)
