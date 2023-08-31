@@ -20,8 +20,10 @@ MSG_ERROR_AUTHENTICATION = (
 
 
 def get_tipo_usuario(usuario):
-    user = Usuario.objects.get(django_user=usuario)
-    return user.tipo_usuario
+    user = Usuario.objects.filter(django_user=usuario)
+    print(user)
+    print(user[0])
+    return user[0].tipo_usuario if user[0] else None
 
 
 def index(request):
@@ -103,6 +105,7 @@ def deslogar_usuario(request):
 
 
 def listar_eventos(request):
+    tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = get_tipo_usuario(request.user)
 
@@ -143,7 +146,6 @@ def cadastrar_evento(request):
     if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
-        user = request.user
         horario = request.POST.get("data_evento")
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
@@ -152,7 +154,7 @@ def cadastrar_evento(request):
             preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
-        organizador = Usuario.objects.get(django_user=user)
+        organizador = Usuario.objects.get(django_user=request.user)
         try:
             criar_evento = Evento.objects.create(
                 nome=nome_evento,
@@ -215,7 +217,7 @@ def editar_evento(request, id):
             evento.horario = horario
             evento.localizacao = localizacao
             evento.preco = preco_ingressos if preco_ingressos else 0
-            if foto: 
+            if foto:
                 evento.foto = foto
             evento.organizador_id = organizador
             evento.save()
@@ -232,5 +234,9 @@ def editar_evento(request, id):
         if request.user.is_authenticated:
             tipo_usuario = get_tipo_usuario(request.user)
 
-    context = {"tipo_usuario": tipo_usuario if tipo_usuario else 0, "evento": evento, "categorias": categorias_default}
+    context = {
+        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+        "evento": evento,
+        "categorias": categorias_default,
+    }
     return render(request, "editar_evento.html", context)
