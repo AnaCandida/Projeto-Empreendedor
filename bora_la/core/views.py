@@ -215,12 +215,13 @@ def editar_evento(request, id):
             evento.horario = horario
             evento.localizacao = localizacao
             evento.preco = preco_ingressos if preco_ingressos else 0
-            evento.foto = foto
+            if foto: 
+                evento.foto = foto
             evento.organizador_id = organizador
             evento.save()
 
             print("Evento alterado com sucesso")
-            # pprint.pprint(evento.__dict__)
+            pprint.pprint(evento.__dict__)
             return redirect(
                 "meus_eventos"
             )  # Redirecione para a lista de eventos após o cadastro
