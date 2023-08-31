@@ -18,13 +18,14 @@ MSG_ERROR_AUTHENTICATION = (
     "Credenciais inválidas. Verifique seu nome de usuário e senha."
 )
 
+
 def get_tipo_usuario(usuario):
-    user =  Usuario.objects.get(django_user=usuario)
+    user = Usuario.objects.get(django_user=usuario)
     return user.tipo_usuario
+
 
 def index(request):
     return render(request, "index.html")
-
 
 
 def cadastrar_usuario(request):
@@ -105,15 +106,15 @@ def deslogar_usuario(request):
 
 def listar_eventos(request):
     if request.user.is_authenticated:
-       tipo_usuario = get_tipo_usuario(request.user)
+        tipo_usuario = get_tipo_usuario(request.user)
 
     eventos = Evento.objects.all()
     context = {
-            "eventos": eventos,
-            "tipo_usuario": tipo_usuario if tipo_usuario else 0,
-        }  # Passar 'tipo_usuario' no contexto
+        "eventos": eventos,
+        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+    }  # Passar 'tipo_usuario' no contexto
 
-    return render (request, 'listar_eventos.html', context)
+    return render(request, "listar_eventos.html", context)
 
 
 @login_required
@@ -127,29 +128,30 @@ def meus_eventos(request):
         context = {
             "eventos": eventos,
             "tipo_usuario": tipo_usuario,
-        }  # Passar 'tipo_usuario' no contexto
+        }
         return render(request, "meus_eventos.html", context)
     else:
         error_message = "Você ainda não cadastrou nenhum evento."
         context = {
             "error_message": error_message,
             "tipo_usuario": tipo_usuario,
-        }  # Passar 'tipo_usuario' no contexto
+        }
         return render(request, "meus_eventos.html", context)
 
 
 def cadastrar_evento(request):
-    categorias_default = Categoria.objects.all()
     tipo_usuario = None
-    if request.method == "POST":        
+
+    if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
         user = request.user
         horario = request.POST.get("data_evento")
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
-        preco_ingressos = preco_ingressos.replace(',','.')
-        preco_ingressos = Decimal(preco_ingressos)
+        if preco_ingressos:
+            preco_ingressos = preco_ingressos.replace(",", ".")
+            preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
         organizador = Usuario.objects.get(django_user=user)
@@ -175,29 +177,27 @@ def cadastrar_evento(request):
             print(e)
 
     else:
-        tipo_usuario = None
         if request.user.is_authenticated:
-            print("autenticado", request.user)
-            usuario = Usuario.objects.filter(django_user=request.user).first()
-            if usuario:
-                tipo_usuario = usuario.tipo_usuario
+            tipo_usuario = get_tipo_usuario(request.user)
 
-    return render(
-        request,
-        "cadastro_evento.html",
-        {"tipo_usuario": tipo_usuario, "categorias": categorias_default},
-    )
+    categorias_default = Categoria.objects.all()
 
+    context = {
+        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+        "categorias": categorias_default,
+    }
+
+    return render(request, "cadastro_evento.html", context)
 
 
 def evento_view(request, id):
     evento = get_object_or_404(Evento, pk=id)
-    return render(request, "editar_evento.html",{"evento":evento})
+    return render(request, "editar_evento.html", {"evento": evento})
 
 
 def editar_evento(request, id):
     evento = get_object_or_404(Evento, pk=id)
-    #categorias_default = Categoria.objects.all()       
+    # categorias_default = Categoria.objects.all()
     if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
@@ -206,7 +206,7 @@ def editar_evento(request, id):
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         foto = request.FILES.get("image")
-        #categorias = request.POST.getlist("pref_categorias[]")
+        # categorias = request.POST.getlist("pref_categorias[]")
         organizador = Usuario.objects.get(django_user=user)
         try:
             evento.nome = nome_evento
@@ -218,8 +218,8 @@ def editar_evento(request, id):
             evento.organizador_id = organizador
             evento.save()
 
-            print("Evento alterado com sucesso") 
-            #pprint.pprint(evento.__dict__)           
+            print("Evento alterado com sucesso")
+            # pprint.pprint(evento.__dict__)
             return redirect(
                 "listar_eventos"
             )  # Redirecione para a lista de eventos após o cadastro

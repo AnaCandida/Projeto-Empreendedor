@@ -4,13 +4,18 @@ from django.test import TestCase
 from django.urls import reverse
 from core.models import Usuario, Evento, Categoria
 from django.test import RequestFactory
-from core.views import cadastrar_usuario, logar_usuario, deslogar_usuario, listar_eventos, cadastrar_evento
+from core.views import (
+    cadastrar_usuario,
+    logar_usuario,
+    deslogar_usuario,
+    listar_eventos,
+    cadastrar_evento,
+)
 import pytest
 
+
 class TestUsuario(TestCase):
-
     def setUp(self):
-
         self.factory = RequestFactory()
 
     def test_cadastrar_usuario(self):
@@ -30,7 +35,7 @@ class TestUsuario(TestCase):
 
         response = self.client.post(url, data)
 
-        self.assertEqual(response.status_code, 302)  
+        self.assertEqual(response.status_code, 302)
 
         user = User.objects.get(username="testuser")
         self.assertIsNotNone(user)
@@ -52,7 +57,7 @@ class TestUsuario(TestCase):
 
         response = self.client.post(url, data)
 
-        self.assertEqual(response.status_code, 302) 
+        self.assertEqual(response.status_code, 302)
 
     def test_deslogar_usuario(self):
         url = reverse("deslogar_usuario")
@@ -69,9 +74,9 @@ class TestUsuario(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(response.context.get("tipo_usuario"))
 
+
 # Teste unitário funcionalidade cadastrar_evento #
 class TestCadastrarEvento(TestCase):
-
     def rf():
         return RequestFactory()
 
@@ -81,9 +86,12 @@ class TestCadastrarEvento(TestCase):
             password="testpass123",
         )
         return user
-    
+
     def categorias():
-        return [Categoria.objects.create(nome="Categoria1"), Categoria.objects.create(nome="Categoria2")]
+        return [
+            Categoria.objects.create(nome="Categoria1"),
+            Categoria.objects.create(nome="Categoria2"),
+        ]
 
     @pytest.fixture
     def post_data(categorias):
