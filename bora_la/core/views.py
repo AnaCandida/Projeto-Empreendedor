@@ -209,19 +209,17 @@ def editar_evento(request, id):
         #categorias = request.POST.getlist("pref_categorias[]")
         organizador = Usuario.objects.get(django_user=user)
         try:
-            editar_evento = Evento.objects.update(
-                nome=nome_evento,
-                descricao=descricao,
-                horario=horario,
-                localizacao=localizacao,
-                preco=preco_ingressos if preco_ingressos else 0,
-                foto=foto,
-                organizador_id=organizador,                
-            )
-            #editar_evento.categorias_id.set(categorias)
+            evento.nome = nome_evento
+            evento.descricao = descricao
+            evento.horario = horario
+            evento.localizacao = localizacao
+            evento.preco = preco_ingressos if preco_ingressos else 0
+            evento.foto = foto
+            evento.organizador_id = organizador
             evento.save()
+
             print("Evento alterado com sucesso") 
-            #pprint.pprint(editar_evento.__dict__)           
+            #pprint.pprint(evento.__dict__)           
             return redirect(
                 "listar_eventos"
             )  # Redirecione para a lista de eventos após o cadastro
@@ -229,4 +227,4 @@ def editar_evento(request, id):
             print("ERROR")
             print(e)
 
-    return render(request, "editar_evento.html",{"evento":evento})
+    return render(request, "editar_evento.html", {"evento": evento})
