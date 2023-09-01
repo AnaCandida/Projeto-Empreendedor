@@ -64,29 +64,29 @@
                </div>
                <div class="form-group mb-3">
                   <label for="descricao_evento">Descrição:</label>
-                  <textarea class="form-control" id="descricao_evento" name="descricao_evento" rows="4" value="{{ evento.descricao }}" required></textarea>
-
+                  <textarea class="form-control" id="descricao_evento" name="descricao_evento" rows="4" required>{{ evento.descricao }}</textarea>
                </div>
 
                <div class="form-group mb-3">
                   <label for="preco_evento">Valor dos ingressos</label>
                   <div class="input-group">
-                     <span class="input-group-text">R$</span>
-                     <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00" value="evento.preco" required>
+                      <span class="input-group-text">R$</span>
+                      <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00"
+                             value="{{ evento.preco|floatformat:2 }}">
                   </div>
                   <div class="invalid-feedback" id="precoError">Apenas valores numéricos são permitidos.</div>
-               </div>
+              </div>
                <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
                   <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
                </div>
 
 
-               
                <div class="mb-3">
                   <label for="data_evento">Data e horário de início:</label>
-                  <input type="datetime-local" class="form-control" name="data_evento" id="data_evento" value="{{evento.horario}}">
-               </div>
+                  <input type="datetime-local" class="form-control" name="data_evento" id="data_evento"
+                         value="{{ evento.horario|date:'Y-m-d\TH:i' }}">
+              </div>
 
                <div class="form-group mb-3">
                   <label for="nome_evento">Endereço:</label>
@@ -96,15 +96,15 @@
                <div class="form-group mb-4">
                   <label for="pref_categorias">Categorias do evento (até 4):</label>
                   <div class="form-check">
-                     {% for categoria in evento.categorias %}
-                     
-                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}">
-                        <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
-                     </div>
-                     {% endfor %}
+                      {% for categoria in categorias %}
+                          <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"
+                                  {% if categoria.id in evento.categorias.all %} checked {% endif %}>
+                              <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
+                          </div>
+                      {% endfor %}
                   </div>
-               </div>
+              </div>
                <div class="form-group d-grid">
                   <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Salvar</button>
                </div>

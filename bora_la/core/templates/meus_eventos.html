@@ -33,10 +33,14 @@
                               <p class="card-text"><strong>Localização:</strong> {{ evento.localizacao }}</p>
                               <p class="card-text"><strong>Preço:</strong> R$ {{ evento.preco }}</p>
                               <!-- Renderização das categorias -->
-                              <p class="card-text"><strong>Categorias:</strong>
-                                 {% for categoria in evento.categorias_id.all %}
-                                    <span class="badge badge-secondary">{{ categoria.nome }}</span>
-                                 {% endfor %}
+                              <!-- <p class="card-text"><strong>Categorias:</strong> -->
+                                 {% if evento.categorias_id%}
+                                    {% for categoria in evento.categorias_id.all %}
+                                       <span class="tag">{{ categoria.nome }}</span>
+                                    {% endfor %}
+                                 {% else %}
+                                    <span class="card-text">Nenhuma categoria associada</span>
+                                 {% endif %}
                               </p>
                               <!-- Fim da renderização das categorias -->
                               <a href="{% url 'editar_evento' evento.id %}" class="btn btn-success">Editar</a>

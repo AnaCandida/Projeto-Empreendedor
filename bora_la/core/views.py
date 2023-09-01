@@ -12,6 +12,7 @@ import pprint
 from decimal import Decimal
 from datetime import datetime
 import pytz
+
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
 MSG_SUCESS_AGRADECIMENTO = "Obrigada por compartilhar conosco sua experiência!"
@@ -146,8 +147,10 @@ def cadastrar_evento(request):
     if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
-        horario_str  = request.POST.get("data_evento")
-        horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(tzinfo=pytz.UTC)
+        horario_str = request.POST.get("data_evento")
+        horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(
+            tzinfo=pytz.UTC
+        )
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         if preco_ingressos:
@@ -155,6 +158,10 @@ def cadastrar_evento(request):
             preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
+        categorias_instancias = []
+        for categoria_id in categorias:
+            categoria = Categoria.objects.get(pk=categoria_id)
+            categorias_instancias.append(categoria)
         organizador = Usuario.objects.get(django_user=request.user)
         try:
             criar_evento = Evento.objects.create(
@@ -166,14 +173,11 @@ def cadastrar_evento(request):
                 preco=preco_ingressos if preco_ingressos else 0,
                 foto=foto,
             )
+            criar_evento.categorias_id.set(categorias_instancias)
 
-
-            criar_evento.categorias_id.set(categorias)
             print("Evento cadastrado com sucesso")
             pprint.pprint(criar_evento.__dict__)
-            return redirect(
-                "meus_eventos"
-            ) 
+            return redirect("meus_eventos")
         except Exception as e:
             print("ERROR")
             print(e)
@@ -193,8 +197,15 @@ def cadastrar_evento(request):
 
 
 def evento_view(request, id):
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = get_tipo_usuario(request.user)
     evento = get_object_or_404(Evento, pk=id)
-    return render(request, "editar_evento.html", {"evento": evento})
+    context = {
+        "eventos": evento,
+        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+    }
+    return render(request, "editar_evento.html", context)
 
 
 def editar_evento(request, id):
@@ -207,11 +218,22 @@ def editar_evento(request, id):
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
         user = request.user
-        horario = request.POST.get("data_evento")
+        horario_str = request.POST.get("data_evento")
+        horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(
+            tzinfo=pytz.UTC
+        )
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         foto = request.FILES.get("image")
-        # categorias = request.POST.getlist("pref_categorias[]")
+        preco_ingressos = request.POST.get("preco_evento")
+        if preco_ingressos:
+            preco_ingressos = preco_ingressos.replace(",", ".")
+            preco_ingressos = Decimal(preco_ingressos)
+        categorias = request.POST.getlist("pref_categorias[]")
+        categorias_instancias = []
+        for categoria_id in categorias:
+            categoria = Categoria.objects.get(pk=categoria_id)
+            categorias_instancias.append(categoria)
         organizador = Usuario.objects.get(django_user=user)
         try:
             evento.nome = nome_evento
@@ -223,6 +245,7 @@ def editar_evento(request, id):
                 evento.foto = foto
             evento.organizador_id = organizador
             evento.save()
+            evento.categorias_id.set(categorias_instancias)
 
             print("Evento alterado com sucesso")
             pprint.pprint(evento.__dict__)
@@ -241,4 +264,5 @@ def editar_evento(request, id):
         "evento": evento,
         "categorias": categorias_default,
     }
+    pprint.pprint(evento.__dict__)
     return render(request, "editar_evento.html", context)
