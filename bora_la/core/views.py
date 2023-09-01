@@ -10,7 +10,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 import pprint
 from decimal import Decimal
-
+from datetime import datetime
+import pytz
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
 MSG_SUCESS_AGRADECIMENTO = "Obrigada por compartilhar conosco sua experiência!"
@@ -145,7 +146,8 @@ def cadastrar_evento(request):
     if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
-        horario = request.POST.get("data_evento")
+        horario_str  = request.POST.get("data_evento")
+        horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(tzinfo=pytz.UTC)
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         if preco_ingressos:
@@ -165,12 +167,13 @@ def cadastrar_evento(request):
                 foto=foto,
             )
 
+
             criar_evento.categorias_id.set(categorias)
             print("Evento cadastrado com sucesso")
             pprint.pprint(criar_evento.__dict__)
             return redirect(
-                "listar_eventos"
-            )  # Redirecione para a lista de eventos após o cadastro
+                "meus_eventos"
+            ) 
         except Exception as e:
             print("ERROR")
             print(e)
