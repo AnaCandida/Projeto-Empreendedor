@@ -91,7 +91,7 @@ class TestCadastrarEvento(TestCase):
 
     def test_cadastrar_evento(self):
         url = reverse("cadastrar_evento")
-        image_content = b"image_content"  
+        image_content = b"image_content"
         image = SimpleUploadedFile("test.png", image_content, content_type="image/png")
         data = {
             "nome_evento": "Meu Evento",
@@ -109,7 +109,6 @@ class TestCadastrarEvento(TestCase):
         self.assertEqual(eventos_criados.count(), 1)
         self.assertEqual(eventos_criados[0].organizador_id, self.usuario)
         # self.assertEqual(list(evento_criado.categorias_id.all()), [self.categoria1, self.categoria2])
-
 
     def test_ver_tela_cadastrar_evento_metodo(self):
         url = reverse("cadastrar_evento")
