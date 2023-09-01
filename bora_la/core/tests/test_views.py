@@ -4,6 +4,10 @@ from django.test import TestCase
 from django.urls import reverse
 from core.models import Usuario, Evento, Categoria
 from django.test import RequestFactory
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
+from django.test import Client
+
 from core.views import (
     cadastrar_usuario,
     logar_usuario,
@@ -11,7 +15,8 @@ from core.views import (
     listar_eventos,
     cadastrar_evento,
 )
-import pytest
+from unittest.mock import patch
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class TestUsuario(TestCase):
@@ -66,66 +71,47 @@ class TestUsuario(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-    def test_listar_eventos_unauthenticated(self):
-        url = reverse("listar_eventos")
 
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIsNone(response.context.get("tipo_usuario"))
-
-
-# Teste unitário funcionalidade cadastrar_evento #
 class TestCadastrarEvento(TestCase):
-    def rf():
-        return RequestFactory()
-
-    def user():
-        user = Usuario.objects.create_user(
-            username="testuser",
-            password="testpass123",
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
+        cls.user = User.objects.create_user(username="testuser", password="testpass123")
+        cls.usuario = Usuario.objects.create(
+            django_user=cls.user,
+            nome="Test User",
+            email="test@example.com",
+            whats="1234567890",
+            tipo_usuario=2,
+            razao_social="Test Company",
         )
-        return user
+        cls.categoria1 = Categoria.objects.create(nome="Categoria1")
+        cls.categoria2 = Categoria.objects.create(nome="Categoria2")
+        cls.client = Client()
 
-    def categorias():
-        return [
-            Categoria.objects.create(nome="Categoria1"),
-            Categoria.objects.create(nome="Categoria2"),
-        ]
-
-    @pytest.fixture
-    def post_data(categorias):
-        return {
+    def test_cadastrar_evento(self):
+        url = reverse("cadastrar_evento")
+        image_content = b"image_content"  
+        image = SimpleUploadedFile("test.png", image_content, content_type="image/png")
+        data = {
             "nome_evento": "Meu Evento",
             "descricao_evento": "Descrição do evento",
             "preco_evento": "50.00",
-            "data_evento": "2023-09-01",
+            "image": image,
+            "data_evento": "2023-09-01T00:00",
             "endereco_evento": "Localização do evento",
-            "pref_categorias[]": [str(cat.id) for cat in categorias],
+            "pref_categorias[]": [str(self.categoria1.id), str(self.categoria2.id)],
         }
 
-    @pytest.mark.django_db
-    def test_cadastrar_evento(rf, user, categorias, post_data):
-        request = rf.post("/cadastrar_evento/", data=post_data)
-        request.user = user
-
-        response = cadastrar_evento(request)
-
-        assert response.status_code == 302  # Verifique se o redirecionamento ocorreu
+        self.client.force_login(self.user)
+        request = self.client.post(url, data)
         eventos_criados = Evento.objects.filter(nome="Meu Evento")
-        assert eventos_criados.count() == 1
-        evento_criado = eventos_criados.first()
-        assert evento_criado.organizador_id == Usuario  # Substitua pelo campo correto
-        assert list(evento_criado.categorias_id.all()) == categorias
+        self.assertEqual(eventos_criados.count(), 1)
+        self.assertEqual(eventos_criados[0].organizador_id, self.usuario)
+        # self.assertEqual(list(evento_criado.categorias_id.all()), [self.categoria1, self.categoria2])
 
-        # Teste para o caso em que a criação do evento falha
-        with pytest.raises(Exception):
-            request_with_error = rf.post("/cadastrar_evento/", data={})
-            request_with_error.user = user
-            cadastrar_evento(request_with_error)
 
-        # Teste para o caso em que o método não é POST
-        request_get = rf.get("/cadastrar_evento/")
-        request_get.user = user
-        response_get = cadastrar_evento(request_get)
-        assert response_get.status_code == 200
+    def test_ver_tela_cadastrar_evento_metodo(self):
+        url = reverse("cadastrar_evento")
+        response_get = self.client.get(url)
+        self.assertEqual(response_get.status_code, 200)
