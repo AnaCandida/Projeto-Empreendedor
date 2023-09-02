@@ -1,16 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Editar Evento{% endblock %}
 <!-- Bloco para inserção do botão de voltar para LISTAGEM -->
 {% block home_button %}
 <div class="position-relative">
-    <a href="{% url 'listar_eventos' %}" class="btn btn-success">
-        <i class="bi bi-arrow-left"></i> Voltar
-    </a>
+   <a href="{% url 'listar_eventos' %}" class="btn btn-success">
+   <i class="bi bi-arrow-left"></i> Voltar
+   </a>
 </div>
 {% endblock %}
-
 {% block content %}
 <style>
    .image-upload {
@@ -18,9 +16,7 @@
    flex-direction: column;
    align-items: center;
    }
-   
-
-    .image-preview {
+   .image-preview {
    margin-top: 10px;
    width: 200px;
    height: 200px;
@@ -37,187 +33,173 @@
    object-fit: contain;
    }
 </style>
-
 <div class="container mt-5 mb-4">
-   <div class="row justify-content-center align-items-start">
-      <div class="col-md-8">
-         <div class="card shadow py-3 px-3">
-            <div class="card-body">
-               <h2 class="text-center mb-4">Editar Evento</h2>
-
-            <form method="post"  enctype="multipart/form-data">
-               {% csrf_token %}
-
-               <!-- Campos de edição do evento -->
-               <div class="image-upload">
-                  <label for="image" style="text-align: left;">Foto atual:</label>
-                  <div class="image-preview"id="imagePreview" style="width:80%">
-                     <img src="{{ evento.foto.url }}" alt="Preview">
-                  </div>
-                  <input type="file" name="image" id="image" accept="image/jpeg" onchange="previewImageChanged(event)">
-                  <div class="invalid-feedback" id="imgError">Todo evento precisa ter uma imagem associada a ele.</div>
-
+<div class="row justify-content-center align-items-start">
+<div class="col-md-8">
+   <div class="card shadow py-3 px-3">
+      <div class="card-body">
+         <h2 class="text-center mb-4">Editar Evento</h2>
+         <form method="post"  enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Campos de edição do evento -->
+            <div class="image-upload">
+               <label for="image" style="text-align: left;">Foto atual:</label>
+               <div class="image-preview"id="imagePreview" style="width:80%">
+                  <img src="{{ evento.foto.url }}" alt="Preview">
                </div>
-               <div class="form-group mb-3">
-                  <label for="nome_evento">Nome do evento:</label>
-                  <input type="text" class="form-control" id="nome_evento" name="nome_evento" value="{{ evento.nome }}" required>
+               <input type="file" name="image" id="image" accept="image/jpeg" onchange="previewImage(event)">
+               <div class="invalid-feedback" id="imgError">Todo evento precisa ter uma imagem associada a ele.</div>
+            </div>
+            <div class="form-group mb-3">
+               <label for="nome_evento">Nome do evento:</label>
+               <input type="text" class="form-control" id="nome_evento" name="nome_evento" value="{{ evento.nome }}" required>
+            </div>
+            <div class="form-group mb-3">
+               <label for="descricao_evento">Descrição:</label>
+               <textarea class="form-control" id="descricao_evento" name="descricao_evento" rows="4" required>{{ evento.descricao }}</textarea>
+            </div>
+            <div class="form-group mb-3">
+               <label for="preco_evento">Valor dos ingressos</label>
+               <div class="input-group">
+                  <span class="input-group-text">R$</span>
+                  <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00"
+                     value="{{ evento.preco|floatformat:2 }}">
                </div>
-               <div class="form-group mb-3">
-                  <label for="descricao_evento">Descrição:</label>
-                  <textarea class="form-control" id="descricao_evento" name="descricao_evento" rows="4" required>{{ evento.descricao }}</textarea>
-               </div>
-
-               <div class="form-group mb-3">
-                  <label for="preco_evento">Valor dos ingressos</label>
-                  <div class="input-group">
-                      <span class="input-group-text">R$</span>
-                      <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00"
-                             value="{{ evento.preco|floatformat:2 }}">
-                  </div>
-                  <div class="invalid-feedback" id="precoError">Apenas valores numéricos são permitidos.</div>
-              </div>
-               <div class="form-check mb-3">
-                  <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
-                  <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
-               </div>
-
-
-               <div class="mb-3">
-                  <label for="data_evento">Data e horário de início:</label>
-                  <input type="datetime-local" class="form-control" name="data_evento" id="data_evento"
-                         value="{{ evento.horario|date:'Y-m-d\TH:i' }}">
-              </div>
-
-               <div class="form-group mb-3">
-                  <label for="nome_evento">Endereço:</label>
-                  <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" value="{{evento.localizacao}}">
-               </div>
-
-               <div class="form-group mb-4">
-                  <label for="pref_categorias">Categorias do evento (até 4):</label>
+               <div class="invalid-feedback" id="precoError">Apenas valores numéricos são permitidos.</div>
+            </div>
+            <div class="form-check mb-3">
+               <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
+               <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
+            </div>
+            <div class="mb-3">
+               <label for="data_evento">Data e horário de início:</label>
+               <input type="datetime-local" class="form-control" name="data_evento" id="data_evento"
+                  value="{{ evento.horario|date:'Y-m-d\TH:i' }}">
+            </div>
+            <div class="form-group mb-3">
+               <label for="nome_evento">Endereço:</label>
+               <input type="text" class="form-control" name="endereco_evento" id="endereco_evento" value="{{evento.localizacao}}">
+            </div>
+            <div class="form-group mb-4">
+               <label for="pref_categorias">Categorias do evento (até 4):</label>
+               <div class="form-check">
+                  {% for categoria in categorias %}
                   <div class="form-check">
-                      {% for categoria in categorias %}
-                          <div class="form-check">
-                              <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"
-                                  {% if categoria.id in evento.categorias.all %} checked {% endif %}>
-                              <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
-                          </div>
-                      {% endfor %}
+                     <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"
+                     {% if categoria.id in evento.categorias.all %} checked {% endif %}>
+                     <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
                   </div>
-              </div>
-               <div class="form-group d-grid">
-                  <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Salvar</button>
+                  {% endfor %}
                </div>
-            </form>
-         </div>
+            </div>
+            <div class="form-group d-grid">
+               <button type="submit" class="btn btn-success mt-3 fw-bold py-2 shadow-sm" id="customButton">Salvar</button>
+            </div>
+         </form>
       </div>
    </div>
-   
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
-    // Variável para rastrear se a imagem foi alterada
-
+   // Variável para rastrear se a imagem foi alterada
+   
    function previewImage(event) {
-       const imagePreview = document.getElementById('imagePreview');
-       const image = imagePreview.querySelector('img');
-       image.src = URL.createObjectURL(event.target.files[0]);
-       image.style.display = 'block';
-       let imageChanged = false;
-      }
-      
-      function previewImageChanged(event){
+      const imagePreview = document.getElementById('imagePreview');
+      let imageChanged = false;
+      const image = imagePreview.querySelector('img');
+      image.src = URL.createObjectURL(event.target.files[0]);
+      image.style.display = 'block';
       imageChanged = true;
       imgError.style.display = "none"; 
-
-   }
+     }
    
    function containsOnlyNumbers(str) {
-       str = str.replace(',','')
-       str = str.replace('.','')
+      str = str.replace(',','')
+      str = str.replace('.','')
    
-       return /^[0-9]+$/.test(str);
+      return /^[0-9]+$/.test(str);
    }
    function formatCurrency(value) {
-       return parseFloat(value).toLocaleString('pt-br', {minimumFractionDigits: 2});
+      return parseFloat(value).toLocaleString('pt-br', {minimumFractionDigits: 2});
    }
    
    
    $(document).ready(function() {
-       let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
-       let maxChecked = 4;
+      let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
+      let maxChecked = 4;
    
-       checkboxes.forEach(function(checkbox) {
-           checkbox.addEventListener('change', function() {
-               var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
+      checkboxes.forEach(function(checkbox) {
+          checkbox.addEventListener('change', function() {
+              var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
    
-               if (checkedCount > maxChecked) {
-                   this.checked = false;
-               } else {
-                   checkboxes.forEach(function(cb) {
-                       if (!cb.checked && checkedCount >= maxChecked) {
-                           cb.disabled = true;
-                       } else {
-                           cb.disabled = false;
-                       }
-                   });
-               }
-           });
+              if (checkedCount > maxChecked) {
+                  this.checked = false;
+              } else {
+                  checkboxes.forEach(function(cb) {
+                      if (!cb.checked && checkedCount >= maxChecked) {
+                          cb.disabled = true;
+                      } else {
+                          cb.disabled = false;
+                      }
+                  });
+              }
+          });
+      });
+      });
+   
+      const input = document.getElementById("preco_evento");
+      const gratuitoCheckbox = document.getElementById("gratuitoCheckbox");
+   
+      input.addEventListener("blur", function() {
+          if (containsOnlyNumbers(this.value) != true){
+              console.log(typeof(this.value))
+              this.value = ""
+              precoError.style.display = "block";
+   
+          }else{
+              
+              precoError.style.display = "none";
+              this.value = this.value.replace(',','.')
+              // console.log(this.value)
+              let formattedValue = formatCurrency(this.value);
+              this.value = this.value.replace(',','.')
+   
+              this.value = formattedValue; // Atualiza o elemento com o valor formatado
+               console.log(this.value)
+          }
+      });
+   
+   
+      gratuitoCheckbox.addEventListener("change", function() {
+       if (this.checked) {
+           input.value = "0.00"; // Define o valor como zero
+           input.disabled = true; // Desabilita o campo de valor
+           precoError.style.display = "none"; // Esconde a mensagem de erro, se estiver visível
+       } else {
+           input.disabled = false; // Habilita o campo de valor
+       }
        });
-       });
-   
-       const input = document.getElementById("preco_evento");
-       const gratuitoCheckbox = document.getElementById("gratuitoCheckbox");
 
-       input.addEventListener("blur", function() {
-           if (containsOnlyNumbers(this.value) != true){
-               console.log(typeof(this.value))
-               this.value = ""
-               precoError.style.display = "block";
-   
-           }else{
-               
-               precoError.style.display = "none";
-               this.value = this.value.replace(',','.')
-               // console.log(this.value)
-               let formattedValue = formatCurrency(this.value);
-               this.value = this.value.replace(',','.')
-
-               this.value = formattedValue; // Atualiza o elemento com o valor formatado
-                console.log(this.value)
+        // Atualiza o rótulo do arquivo quando um arquivo é selecionado
+        document.getElementById('image').addEventListener('change', function() {
+           const fileLabel = document.querySelector('label[for="image"]');
+           if (this.files.length > 0) {
+              fileLabel.textContent = 'Arquivo selecionado: ' + this.files[0].name;
+           } else {
+              fileLabel.textContent = 'Capa atual';
            }
-       });
-   
-
-       gratuitoCheckbox.addEventListener("change", function() {
-        if (this.checked) {
-            input.value = "0.00"; // Define o valor como zero
-            input.disabled = true; // Desabilita o campo de valor
-            precoError.style.display = "none"; // Esconde a mensagem de erro, se estiver visível
-        } else {
-            input.disabled = false; // Habilita o campo de valor
-        }
         });
-   
-         // Atualiza o rótulo do arquivo quando um arquivo é selecionado
-         document.getElementById('image').addEventListener('change', function() {
-            const fileLabel = document.querySelector('label[for="image"]');
-            if (this.files.length > 0) {
-               fileLabel.textContent = 'Arquivo selecionado: ' + this.files[0].name;
-            } else {
-               fileLabel.textContent = 'Capa atual';
-            }
-         });
-   
-        // Ao enviar o formulário
-   document.querySelector("form").addEventListener("submit", function(event) {
-       const precoInput = document.getElementById("preco_evento");
-       if (!imageChanged) {
-         event.preventDefault(); // Impede o envio do formulário se a imagem não foi alterada
-         imgError.style.display = "block";
 
-      }
+       // Ao enviar o formulário
+   document.querySelector("form").addEventListener("submit", function(event) {
+      const precoInput = document.getElementById("preco_evento");
+      if (!imageChanged) {
+        event.preventDefault(); // Impede o envio do formulário se a imagem não foi alterada
+        imgError.style.display = "block";
+
+     }
    });
-   
+
 </script>
 {% endblock %}
