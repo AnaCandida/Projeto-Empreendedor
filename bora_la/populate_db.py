@@ -1,7 +1,7 @@
 import os
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nomedoseuprojeto.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bora_la.settings")
 django.setup()
 
 from core.models import Categoria
