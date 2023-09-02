@@ -4,9 +4,9 @@ from django.test import TestCase
 from django.urls import reverse
 from core.models import Usuario, Evento, Categoria
 from django.test import RequestFactory
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import authenticate
 from django.test import Client
+from decimal import Decimal
+
 
 from core.views import (
     cadastrar_usuario,
@@ -19,9 +19,10 @@ from unittest.mock import patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
-class TestUsuario(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
+class TestCadastroUsuario(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
 
     def test_cadastrar_usuario(self):
         url = reverse("cadastrar_usuario")
@@ -72,7 +73,7 @@ class TestUsuario(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestCadastrarEvento(TestCase):
+class TestCadastroEvento(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
@@ -108,7 +109,54 @@ class TestCadastrarEvento(TestCase):
         eventos_criados = Evento.objects.filter(nome="Meu Evento")
         self.assertEqual(eventos_criados.count(), 1)
         self.assertEqual(eventos_criados[0].organizador_id, self.usuario)
-        # self.assertEqual(list(evento_criado.categorias_id.all()), [self.categoria1, self.categoria2])
+        self.assertEqual(
+            list(eventos_criados[0].categorias_id.all()),
+            [self.categoria1, self.categoria2],
+        )
+
+    def test__editar_evento(self):
+        evento = Evento.objects.create(
+            nome="Evento Antigo",
+            descricao="Descrição do evento antigo",
+            preco="30.00",
+            horario="2023-09-02T00:00",
+            localizacao="Localização do evento antigo",
+            organizador_id=self.usuario,
+        )
+        evento.categorias_id.add(self.categoria1)
+
+        url = reverse("editar_evento", args=[evento.id])
+        image_content = b"new_image_content"
+        new_image = SimpleUploadedFile(
+            "new_test.png", image_content, content_type="image/png"
+        )
+        data = {
+            "nome_evento": "Evento Atualizado",
+            "descricao_evento": "Nova descrição do evento",
+            "preco_evento": "40.00",
+            "image": new_image,
+            "data_evento": "2023-09-03T00:00",
+            "endereco_evento": "Nova localização do evento",
+            "pref_categorias[]": [str(self.categoria2.id)],
+        }
+        self.client.force_login(self.user)
+        response = self.client.post(url, data)
+
+        # Verifique se a resposta foi redirecionada com sucesso (status code 302)
+        self.assertEqual(response.status_code, 302)
+
+        # Atualize o objeto evento da base de dados
+        evento.refresh_from_db()
+
+        # Verifique se os campos foram atualizados corretamente
+        self.assertEqual(evento.nome, "Evento Atualizado")
+        self.assertEqual(evento.descricao, "Nova descrição do evento")
+        self.assertEqual(evento.preco, Decimal("40.00"))
+        self.assertEqual(evento.horario.strftime("%Y-%m-%dT%H:%M"), "2023-09-03T00:00")
+        self.assertEqual(evento.localizacao, "Nova localização do evento")
+
+        # Verifique se as categorias foram atualizadas corretamente
+        self.assertEqual(list(evento.categorias_id.all()), [self.categoria2])
 
     def test_ver_tela_cadastrar_evento_metodo(self):
         url = reverse("cadastrar_evento")
