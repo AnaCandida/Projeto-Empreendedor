@@ -57,7 +57,7 @@
                         </svg>
                     </a>
                     {% if user.is_authenticated %}
-                    
+
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <p class="nav-link">Olá, {{ user.username }}</p>
                             <li><a class="dropdown-item" href="#">Perfil</a></li>
@@ -67,12 +67,12 @@
 
                                 {% endif %}
                             <li><a class="dropdown-item" href="{% url 'deslogar_usuario' %}">Sair</a></li>
-                            
+
                         </ul>
                         {% else %}
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="{% url 'logar_usuario' %}">Login </a></li>
-                            
+
                             <li><a class="dropdown-item" href="{% url 'cadastrar_usuario' %}">Cadastrar Conta</a></li>
                         </ul>
                     {% endif %}
@@ -80,7 +80,7 @@
             </ul>
         </div>
         {% endblock %}
-        
+
     </div>
 </nav>
 
@@ -104,10 +104,9 @@
     <script>
         // Obtém o ano atual
         var currentYear = new Date().getFullYear();
-    
+
         // Atualiza o conteúdo do elemento currentYear com o ano atual
         document.getElementById("currentYear").textContent = currentYear;
     </script>
-    
 </body>
 </html>

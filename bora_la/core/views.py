@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 import datetime
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -12,6 +11,8 @@ import pprint
 from decimal import Decimal
 from datetime import datetime
 import pytz
+from django.core.paginator import Paginator
+
 
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
@@ -105,19 +106,6 @@ def deslogar_usuario(request):
     return redirect("index")
 
 
-def listar_eventos(request):
-    tipo_usuario = None
-    if request.user.is_authenticated:
-        tipo_usuario = get_tipo_usuario(request.user)
-
-    eventos = Evento.objects.all()
-    context = {
-        "eventos": eventos,
-        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
-    }  # Passar 'tipo_usuario' no contexto
-
-    return render(request, "listar_eventos.html", context)
-
 
 @login_required
 def meus_eventos(request):
@@ -196,24 +184,11 @@ def cadastrar_evento(request):
     return render(request, "cadastro_evento.html", context)
 
 
-def evento_view(request, id):
-    tipo_usuario = None
-    if request.user.is_authenticated:
-        tipo_usuario = get_tipo_usuario(request.user)
-    evento = get_object_or_404(Evento, pk=id)
-    context = {
-        "eventos": evento,
-        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
-    }
-    return render(request, "editar_evento.html", context)
-
-
 def editar_evento(request, id):
     tipo_usuario = None
     categorias_default = Categoria.objects.all()
 
     evento = get_object_or_404(Evento, pk=id)
-    # categorias_default = Categoria.objects.all()
     if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
@@ -266,3 +241,68 @@ def editar_evento(request, id):
     }
     pprint.pprint(evento.__dict__)
     return render(request, "editar_evento.html", context)
+
+
+def visualizar_evento(request, id):
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = get_tipo_usuario(request.user)
+    evento = get_object_or_404(Evento, pk=id)
+    context = {
+        "evento": evento,
+        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+    }
+    return render(request, "visualizar_evento.html", context)
+
+
+def listar_eventos(request):
+    tipo_usuario = None
+    if request.user.is_authenticated:
+        tipo_usuario = get_tipo_usuario(request.user)
+
+    eventos = Evento.objects.all()
+    eventos_por_pagina = 10
+    paginator = Paginator(eventos, eventos_por_pagina)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+
+    context = {
+        "page": page,
+        "eventos": eventos,
+        "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+    }  # Passar 'tipo_usuario' no contexto
+
+    return render(request, "listar_eventos.html", context)
+
+def filtrar_eventos(request):
+    categoria = request.GET.get("nome_parcial")
+    data = request.GET.get("data")
+
+    eventos = Evento.objects.all()
+
+
+    # from pdb import set_trace;set_trace()
+
+    if categoria:
+        eventos = eventos.filter(categorias_id__nome__icontains=categoria)
+    
+
+    if data:
+        try:
+            data = datetime.strptime(data, "%Y-%m-%d").date()
+            eventos = eventos.filter(data__gte=data)
+        except ValueError:
+            pass
+
+    eventos_por_pagina = 5
+    paginator = Paginator(eventos, eventos_por_pagina)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+        "page": page,
+        "eventos": eventos,
+    }
+
+    return render(request, "listar_eventos.html", context)

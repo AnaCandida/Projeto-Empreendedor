@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Visualizar evento{% endblock %}
+
+{% block content %}
+   <div class="container mt-5">
+      <div class="row justify-content-center">
+         <div class="col-md-10">
+            <h1 class="mb-4">Detalhes do Evento</h1>
+    
+            {% if evento %}
+               <div class="card">
+                  {% if evento.foto %}
+                     <img src="{{ evento.foto.url }}" class="card-img-top" alt="{{ evento.nome }}">
+                  {% endif %}
+                  <div class="card-body">
+                     <h5 class="card-title">{{ evento.nome }}</h5>
+                     <p class="card-text description">{{ evento.descricao|linebreaksbr|truncatechars:300 }}{% if evento.descricao|length > 300 %}... <a href="#" class="read-more">Leia mais</a>{% endif %}</p>
+                     <p class="card-text"><strong>Horário:</strong> {{ evento.horario }}</p>
+                     <p class="card-text"><strong>Localização:</strong> {{ evento.localizacao }}</p>
+                     <p class="card-text"><strong>Preço:</strong> R$ {{ evento.preco }}</p>
+                     <!-- Renderização das categorias -->
+                     <!-- <p class="card-text"><strong>Categorias:</strong> -->
+                        {% if evento.categorias_id%}
+                           {% for categoria in evento.categorias_id.all %}
+                              <span class="tag">{{ categoria.nome }}</span>
+                           {% endfor %}
+                        {% else %}
+                           <span class="card-text">Nenhuma categoria associada</span>
+                        {% endif %}
+                     </p>
+                     <!-- Fim da renderização das categorias -->
+                  </div>
+               </div>
+            {% else %}
+               <p>Evento não encontrado.</p>
+            {% endif %}
+         </div>
+      </div>
+   </div>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p></p>
+
+
+
+{% endblock %}
+
+<script

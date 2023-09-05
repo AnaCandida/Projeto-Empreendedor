@@ -1,27 +1,75 @@
-<!-- LISTAR EVENTOS -->
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Listagem de Eventos{% endblock %}
 
 {% block content %}
+   <div class="container mt-5">
+      <div class="row justify-content-center">
+         <div class="col-md-10">
+            <h1 class="mb-4">Listagem de Eventos</h1>
 
+            <form method="GET" action="{% url 'filtrar_eventos' %}">
+               <div class="col-9 search-div">
+                  <div class="input-group">
+                     <input type="text" id="search" name="nome_parcial" class="form-control" placeholder="Digite uma categoria para buscar">
+                     <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-secondary" id="search-button" aria-label="Pesquisar">
+                           <i class="bi bi-search"></i>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               <p></p>
+            </form>
+            
+            <p></p>
 
+            {% if eventos %}
+               <div class="row">
+                  {% for evento in page %}
+                     <div class="col-md-4 mb-4">
+                        <div class="card">
+                           {% if evento.foto %}
+                              <img src="{{ evento.foto.url }}" class="card-img-top" alt="{{ evento.nome }}">
+                           {% endif %}
+                           <div class="card-body" style="text-align: justify;">
+                              <h5 class="card-title">{{ evento.nome }}</h5>
+                              <p class="card-text text-justify ">{{ evento.descricao }}</p>
+                              <!-- Renderização das categorias -->
+                              {% if evento.categorias_id%}
+                                 {% for categoria in evento.categorias_id.all %}
+                                    <span class="tag">{{ categoria.nome }}</span>
+                                 {% endfor %}
+                              {% else %}
+                                 <span class="card-text">Nenhuma categoria associada</span>
+                              {% endif %}
+                              <!-- Fim da renderização das categorias -->
+                              <a href="{% url 'visualizar_evento' evento.id %}" class="btn btn-success">Visualizar</a>
+                           </div>
+                        </div>
+                     </div>
+                  {% endfor %}
+               </div>
+               <!-- Adicione os links de paginação aqui -->
+               <div class="pagination">
+                  <span class="step-links">
+                     {% if page.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page.previous_page_number }}">previous</a>
+                     {% endif %}
 
-<div class="container mt-5">
-    <div class="offset-1 col10 list-div">
-        <h1>Listagem de Eventos</h1>
-        <div class="col-10 add-div">
-            Adicionar Evento
-        </div>
-        <div class="col-9 search-div">
-            <input type="text" id="search" name="search" placeholder="Digite o nome do evento para buscar">            
-        </div>
-        <div class="listar-eventos">
-            {% for evento in eventos %}
-            <li class="evento-item">
-                <span><a href="/editar_evento/{{evento.id}}"> {{evento.id}} {{evento.nome}}</a></span>
-            </li>
-            {% endfor%}
-        </div>
-    </div>
-</div>
+                     <span class="current-page">{{ page.number }}</span>
+
+                     {% if page.has_next %}
+                        <a href="?page={{ page.next_page_number }}">next</a>
+                        <a href="?page={{ page.paginator.num_pages }}">last &raquo;</a>
+                     {% endif %}
+                  </span>
+               </div>
+            {% else %}
+               <p>Nenhum evento encontrado.</p>
+            {% endif %}
+         </div>
+      </div>
+   </div>
 {% endblock %}
