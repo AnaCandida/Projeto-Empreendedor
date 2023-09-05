@@ -54,7 +54,6 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
     CREATE USER postgres WITH ENCRYPTED PASSWORD 'postgres';
     CREATE DATABASE db_bora_la;
     GRANT ALL PRIVILEGES ON DATABASE db_bora_la TO postgres;
-    c
      \l
     ```
 
@@ -70,8 +69,6 @@ As dependencias do projeto são instaladas no container a partir da configuraç�
     use a senha padrao "admin" e digite "y" no bypass de segurança
     python populate_db.py
     para popular o banco com as categorias default
-    Por fim, inicie o servidor:
-    python manage.py runserver 0.0.0.0:8000
     ```
 
 6. Se tudo estiver certo, o projeto estará disponível em http://localhost:8000/ .
