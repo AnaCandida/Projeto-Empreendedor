@@ -8,7 +8,7 @@ from core.models import Categoria
 
 
 def populate_categories():
-    categorias = ["Comida", "Ar Livre", "Negócio Local", "Cultura", "Esporte", "Música"]
+    categorias = ["Comida", "Ar Livre", "Negocio Local", "Cultura", "Esporte", "Musica"]
 
     for categoria_nome in categorias:
         categoria, created = Categoria.objects.get_or_create(nome=categoria_nome)
