@@ -2,7 +2,6 @@
 
 
 /* FORMULARIOS */
-/* Remove the default focus effect for input elements */
 .form-control:focus,
 .form-control.focus,
 .form-control:focus-visible {
@@ -66,4 +65,13 @@ footer {
 /* PAGINAÇÃO */
 .pagination {
     width: 100%;
+}
+/* MENU */
+
+.dropdown-menu {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: none;
+    padding: 5%;
+    position: absolute;
+    z-index: 9999;
 }
