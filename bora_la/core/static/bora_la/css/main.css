@@ -35,7 +35,8 @@
     color: #ffffff;
     border-radius: 4px;
     width: 50%;
-    font-size: 90%;
+    font-size: 80%;
+    text-align: center;
   }
 /* PAGINA */
 /* Cor de fundo verde claro */
@@ -61,4 +62,8 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+/* PAGINAÇÃO */
+.pagination {
+    width: 100%;
 }

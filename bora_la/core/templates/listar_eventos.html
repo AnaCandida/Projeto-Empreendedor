@@ -3,73 +3,84 @@
 {% block title %}Listagem de Eventos{% endblock %}
 
 {% block content %}
-   <div class="container mt-5">
-      <div class="row justify-content-center">
-         <div class="col-md-10">
-            <h1 class="mb-4">Listagem de Eventos</h1>
-
-            <form method="GET" action="{% url 'filtrar_eventos' %}">
-               <div class="col-9 search-div">
-                  <div class="input-group">
-                     <input type="text" id="search" name="nome_parcial" class="form-control" placeholder="Digite uma categoria para buscar">
-                     <div class="input-group-append">
-                        <button type="submit" class="btn btn-outline-secondary" id="search-button" aria-label="Pesquisar">
-                           <i class="bi bi-search"></i>
-                        </button>
+<div class="container mt-5">
+   <div class="row justify-content-center">
+      <div class="col-md-10">
+         <h2 class="mb-4">Eventos</h2>
+         <form method="GET" action="{% url 'filtrar_eventos' %}">
+            <div class="input-group mb-3">
+               <input type="text" id="search" name="nome_parcial" class="form-control" placeholder="Digite o nome do evento que você procura" aria-label="Digite o nome do evento" aria-describedby="search-button">
+               <button type="submit" class="btn btn-success" id="search-button">Pesquisar</button>
+            </div>
+         </form>
+         {% if eventos %}
+         <div class="row">
+            {% for evento in page %}
+            <div class="col-md-4 mb-4">
+               <div class="card h-100 shadow">
+                  {% if evento.foto %}
+                  <img src="{{ evento.foto.url }}" class="card-img-top" alt="{{ evento.nome }}">
+                  {% endif %}
+                  <div class="card-body d-flex flex-column">
+                     <h5 class="card-title">{{ evento.nome }}</h5>
+                     <p class="card-text">{{ evento.descricao|truncatechars:200 }}</p>
+                     <!-- Renderização das categorias -->
+                     <!-- Fim da renderização das categorias -->
+                     <div class="mt-auto">
+                        <!-- Esta div empurra o conteúdo para a parte inferior -->
+                        {% if evento.categorias_id %}
+                        <div class="d-flex justify-content-center mb-2">
+                           {% for categoria in evento.categorias_id.all %}
+                           <span class="badge bg-secondary me-1">{{ categoria.nome }}</span>
+                           {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="card-text text-muted">Nenhuma categoria associada</p>
+                        {% endif %}
+                        <a href="{% url 'visualizar_evento' evento.id %}" class="btn btn-success btn-block">Visualizar Detalhes</a>
                      </div>
                   </div>
                </div>
-               <p></p>
-            </form>
-            
-            <p></p>
-
-            {% if eventos %}
-               <div class="row">
-                  {% for evento in page %}
-                     <div class="col-md-4 mb-4">
-                        <div class="card">
-                           {% if evento.foto %}
-                              <img src="{{ evento.foto.url }}" class="card-img-top" alt="{{ evento.nome }}">
-                           {% endif %}
-                           <div class="card-body" style="text-align: justify;">
-                              <h5 class="card-title">{{ evento.nome }}</h5>
-                              <p class="card-text text-justify ">{{ evento.descricao }}</p>
-                              <!-- Renderização das categorias -->
-                              {% if evento.categorias_id%}
-                                 {% for categoria in evento.categorias_id.all %}
-                                    <span class="tag">{{ categoria.nome }}</span>
-                                 {% endfor %}
-                              {% else %}
-                                 <span class="card-text">Nenhuma categoria associada</span>
-                              {% endif %}
-                              <!-- Fim da renderização das categorias -->
-                              <a href="{% url 'visualizar_evento' evento.id %}" class="btn btn-success">Visualizar</a>
-                           </div>
-                        </div>
-                     </div>
-                  {% endfor %}
-               </div>
-               <!-- Adicione os links de paginação aqui -->
-               <div class="pagination">
-                  <span class="step-links">
-                     {% if page.has_previous %}
-                        <a href="?page=1">&laquo; first</a>
-                        <a href="?page={{ page.previous_page_number }}">previous</a>
-                     {% endif %}
-
-                     <span class="current-page">{{ page.number }}</span>
-
-                     {% if page.has_next %}
-                        <a href="?page={{ page.next_page_number }}">next</a>
-                        <a href="?page={{ page.paginator.num_pages }}">last &raquo;</a>
-                     {% endif %}
-                  </span>
-               </div>
-            {% else %}
-               <p>Nenhum evento encontrado.</p>
-            {% endif %}
+            </div>
+            {% endfor %}
          </div>
+         <!-- PAGINAÇÃO -->
+         <div class="d-flex justify-content-end">
+            <nav aria-label="Page navigation">
+               <ul class="pagination">
+                  {% if page.has_previous %}
+                  <li class="page-item">
+                     <a class="page-link" href="?page=1" aria-label="Primeira página">
+                     <i class="bi bi-chevron-double-left text-success"></i>
+                     </a>
+                  </li>
+                  <li class="page-item">
+                     <a class="page-link" href="?page={{ page.previous_page_number }}" aria-label="Página anterior">
+                     <i class="bi bi-chevron-left text-success"></i>
+                     </a>
+                  </li>
+                  {% endif %}
+                  <li class="page-item disabled"><span class="page-link">Página {{ page.number }} de {{ page.paginator.num_pages }}</span></li>
+                  {% if page.has_next %}
+                  <li class="page-item">
+                     <a class="page-link" href="?page={{ page.next_page_number }}" aria-label="Próxima página">
+                     <i class="bi bi-chevron-right text-success"></i>
+                     </a>
+                  </li>
+                  <li class="page-item">
+                     <a class="page-link" href="?page={{ page.paginator.num_pages }}" aria-label="Última página">
+                     <i class="bi bi-chevron-double-right text-success"></i>
+                     </a>
+                  </li>
+                  {% endif %}
+               </ul>
+            </nav>
+         </div>
+         <!-- Fim da Paginação -->
+         {% else %}
+         <p class="text-muted">Nenhum evento encontrado.</p>
+         {% endif %}
       </div>
    </div>
+</div>
 {% endblock %}
