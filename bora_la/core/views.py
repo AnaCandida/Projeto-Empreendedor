@@ -12,7 +12,11 @@ from decimal import Decimal
 from datetime import datetime
 import pytz
 from django.core.paginator import Paginator
+import environ
+from urllib.parse import quote
 
+env = environ.Env()
+env.read_env()
 EVENTOS_POR_PAGINA = 3
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
@@ -244,14 +248,22 @@ def editar_evento(request, id):
 
 
 def visualizar_evento(request, id):
+    api_key = env("API_KEY")
     tipo_usuario = None
     if request.user.is_authenticated:
         tipo_usuario = get_tipo_usuario(request.user)
     evento = get_object_or_404(Evento, pk=id)
+    # Codifica a localizacao para usar na URL do Google Maps
+    localizacao = quote(evento.localizacao)
     context = {
         "evento": evento,
         "tipo_usuario": tipo_usuario if tipo_usuario else 0,
+        "API_KEY": api_key,
+        "localizacao": localizacao  # Adiciona a localizacao codificada ao contexto
+
     }
+    print(api_key)
+    print(evento.localizacao)
     return render(request, "visualizar_evento.html", context)
 
 
@@ -278,8 +290,6 @@ def filtrar_eventos(request):
     nome = request.GET.get("nome_parcial")
 
     eventos = Evento.objects.all()
-
-    # from pdb import set_trace;set_trace()
 
     if nome:
         eventos = eventos.filter(nome__icontains=nome)

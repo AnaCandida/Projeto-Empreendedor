@@ -49,7 +49,7 @@
 
                   {% if evento.localizacao %}
                   <div class="embed-responsive embed-responsive-16by9"></div>
-                     <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB0Ilo6q3r2qmNEDNUzaxDPG0qFcqoI93E&q={{ evento.localizacao }}"></iframe>
+                     <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
                      </div>
                   {% endif %}
 
