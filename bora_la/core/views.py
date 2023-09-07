@@ -13,7 +13,7 @@ from datetime import datetime
 import pytz
 from django.core.paginator import Paginator
 
-
+EVENTOS_POR_PAGINA = 3
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
 MSG_SUCESS_AGRADECIMENTO = "Obrigada por compartilhar conosco sua experiência!"
@@ -261,41 +261,31 @@ def listar_eventos(request):
         tipo_usuario = get_tipo_usuario(request.user)
 
     eventos = Evento.objects.all()
-    eventos_por_pagina = 10
+    eventos_por_pagina = EVENTOS_POR_PAGINA
     paginator = Paginator(eventos, eventos_por_pagina)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-
 
     context = {
         "page": page,
         "eventos": eventos,
         "tipo_usuario": tipo_usuario if tipo_usuario else 0,
-    }  # Passar 'tipo_usuario' no contexto
+    }
 
     return render(request, "listar_eventos.html", context)
 
 def filtrar_eventos(request):
-    categoria = request.GET.get("nome_parcial")
-    data = request.GET.get("data")
+    nome = request.GET.get("nome_parcial")
 
     eventos = Evento.objects.all()
 
-
     # from pdb import set_trace;set_trace()
 
-    if categoria:
-        eventos = eventos.filter(categorias_id__nome__icontains=categoria)
+    if nome:
+        eventos = eventos.filter(nome__icontains=nome)
     
 
-    if data:
-        try:
-            data = datetime.strptime(data, "%Y-%m-%d").date()
-            eventos = eventos.filter(data__gte=data)
-        except ValueError:
-            pass
-
-    eventos_por_pagina = 5
+    eventos_por_pagina = EVENTOS_POR_PAGINA
     paginator = Paginator(eventos, eventos_por_pagina)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
