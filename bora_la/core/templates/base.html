@@ -30,45 +30,34 @@
             {% block nav %}
             <div class="d-flex align-items-center justify-content-between w-100">
                <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
-                  
                </a>
                <div class="d-flex position-relative">
                   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                     {% if user.is_authenticated %}
-                        <ul class="nav-item dropdown">
-                           <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              <span class="bi bi-bell-fill"></span>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-                              </svg>
-                           </a>
-                           <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="userDropdown">
+                     <ul class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                           <!-- icones do menu -->
+                           <span class="bi bi-bell-fill"></span>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                           </svg>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="userDropdown">
+                           {% if user.is_authenticated %}
                               <p class="nav-link">Olá, {{ user.username }}</p>
                               <li><a class="dropdown-item" href="#">Perfil</a></li>
+                              <li><a class="dropdown-item" href="{% url 'listar_eventos' %}">Ver eventos</a></li>
                               {% if tipo_usuario == 2 %}
-                                 <li><a class="dropdown-item" href="{% url 'listar_eventos' %}">Ver eventos</a></li>
                                  <li><a class="dropdown-item" href="{% url 'cadastrar_evento' %}">Cadastrar evento</a></li>
                                  <li><a class="dropdown-item" href="{% url 'meus_eventos' %}">Meus eventos</a></li>
                               {% endif %}
                               <li><a class="dropdown-item" href="{% url 'deslogar_usuario' %}">Sair</a></li>
-                           </ul>
+                           {% else %}
+                           <li><a class="dropdown-item" href="{% url 'logar_usuario' %}">Login</a></li>
+                           <li><a class="dropdown-item" href="{% url 'cadastrar_usuario' %}">Cadastrar Conta</a></li>
+                           {% endif %}
                         </ul>
-                     {% else %}
-                        <li class="nav-item">
-                           <a class="nav-link" href="{% url 'logar_usuario' %}">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-                              </svg> Login
-                           </a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="{% url 'cadastrar_usuario' %}">Cadastrar Conta</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="{% url 'listar_eventos' %}">Ver eventos</a>
-                        </li>
-                     {% endif %}
-                     </nav>
+                     </ul>
+                  </nav>
                </div>
             </div>
             {% endblock %}
