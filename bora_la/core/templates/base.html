@@ -44,7 +44,7 @@
                         <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="userDropdown">
                            {% if user.is_authenticated %}
                               <p class="nav-link">Olá, {{ user.username }}</p>
-                              <li><a class="dropdown-item" href="#">Perfil</a></li>
+                              <li><a class="dropdown-item" href="{% url 'editar_usuario' user.id %}">Perfil</a></li>
                               <li><a class="dropdown-item" href="{% url 'listar_eventos' %}">Ver eventos</a></li>
                               {% if tipo_usuario == 2 %}
                                  <li><a class="dropdown-item" href="{% url 'cadastrar_evento' %}">Cadastrar evento</a></li>
