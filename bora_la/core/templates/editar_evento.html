@@ -63,12 +63,13 @@
                <div class="input-group">
                   <span class="input-group-text">R$</span>
                   <input type="text" class="form-control no-spin" name="preco_evento" id="preco_evento" placeholder="00,00"
-                     value="{{ evento.preco|floatformat:2 }}">
+                     value="{{ evento.preco|floatformat:2 }}" {% if evento.preco == 0 %}disabled{% endif %}>
                </div>
                <div class="invalid-feedback" id="precoError">Apenas valores numéricos são permitidos.</div>
             </div>
             <div class="form-check mb-3">
-               <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox">
+               <input class="form-check-input" type="checkbox" name="gratuito" id="gratuitoCheckbox" {% if evento.preco == 0 %}checked{% endif %}>
+               
                <label class="form-check-label" for="gratuitoCheckbox">Gratuito</label>
             </div>
             <div class="mb-3">
@@ -85,8 +86,7 @@
                <div class="form-check">
                   {% for categoria in categorias %}
                   <div class="form-check">
-                     <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"
-                     {% if categoria.id in evento.categorias.all %} checked {% endif %}>
+                     <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"{% if categoria.id in categorias_evento %} checked {% endif %}>
                      <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
                   </div>
                   {% endfor %}
@@ -130,8 +130,8 @@
       let maxChecked = 4;
    
       checkboxes.forEach(function(checkbox) {
-          checkbox.addEventListener('change', function() {
-              var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
+         checkbox.addEventListener('change', function() {
+            var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
    
               if (checkedCount > maxChecked) {
                   this.checked = false;

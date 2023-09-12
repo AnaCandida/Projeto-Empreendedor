@@ -32,11 +32,19 @@ def get_tipo_usuario(usuario):
     return user[0].tipo_usuario if user else None
 
 
+def get_usuario(usuario):
+    user = Usuario.objects.filter(django_user=usuario)
+    print(user)
+    return user[0] if user else None
+
+
 def index(request):
     return render(request, "index.html")
 
 
 def cadastrar_usuario(request):
+    categorias_disponiveis = Categoria.objects.all()
+
     if request.method == "POST":
         form_usuario = UserCreationForm(request.POST)
         if form_usuario.is_valid():
@@ -74,17 +82,62 @@ def cadastrar_usuario(request):
             return render(
                 request,
                 "cadastro.html",
-                {"form_usuario": form_usuario, "erros_formulario": erros_formulario},
+                {
+                    "form_usuario": form_usuario,
+                    "erros_formulario": erros_formulario,
+                    "categorias": categorias_disponiveis,
+                },
             )
     else:
-        categorias_disponiveis = Categoria.objects.all()
-
         form_usuario = UserCreationForm()
         return render(
             request,
             "cadastro.html",
             {"form_usuario": form_usuario, "categorias": categorias_disponiveis},
         )
+
+
+def editar_usuario(request, id):
+    # tipo_usuario = None
+    # user = None
+    categorias_default = Categoria.objects.all()
+    if request.method == "POST":
+        form_usuario = UserCreationForm(request.POST)
+        if form_usuario.is_valid():
+            nome = request.POST.get("nome")
+            email = request.POST.get("email")
+            telefone = request.POST.get("telefone")
+            whatsapp = request.POST.get("telefone")
+            tipo_usuario = request.POST.get("user_type")
+            razao_social = request.POST.get("razao_social")
+            selected_categories = request.POST.getlist("pref_categorias[]")
+
+            try:
+                print("vou salvar cadastro")
+
+                user = form_usuario.save()
+                django_user = user
+                cadastro_user = Usuario.objects.create(
+                    django_user=user,
+                    nome=nome,
+                    email=email,
+                    whats=telefone,
+                    tipo_usuario=tipo_usuario,
+                    razao_social=razao_social,
+                    pref_categorias=selected_categories,
+                )
+            except Exception as e:
+                print("nao salvou user")
+                print(e)
+
+    user = get_usuario(request.user)
+    context = {
+        "tipo_usuario": user.tipo_usuario,
+        "usuario": user,
+        "categorias": categorias_default,
+    }
+    pprint.pprint(user.__dict__)
+    return render(request, "editar_usuario.html", context)
 
 
 def logar_usuario(request):
@@ -108,7 +161,6 @@ def logar_usuario(request):
 def deslogar_usuario(request):
     logout(request)
     return redirect("index")
-
 
 
 @login_required
@@ -241,9 +293,13 @@ def editar_evento(request, id):
     context = {
         "tipo_usuario": tipo_usuario if tipo_usuario else 0,
         "evento": evento,
+        "categorias_evento": evento.categorias_id.values_list("id", flat=True),
         "categorias": categorias_default,
     }
     pprint.pprint(evento.__dict__)
+    pprint.pprint(evento.categorias_id.all())
+    pprint.pprint(evento.categorias_id.values_list("id", flat=True))
+
     return render(request, "editar_evento.html", context)
 
 
@@ -259,8 +315,7 @@ def visualizar_evento(request, id):
         "evento": evento,
         "tipo_usuario": tipo_usuario if tipo_usuario else 0,
         "API_KEY": api_key,
-        "localizacao": localizacao  # Adiciona a localizacao codificada ao contexto
-
+        "localizacao": localizacao,  # Adiciona a localizacao codificada ao contexto
     }
     print(api_key)
     print(evento.localizacao)
@@ -275,7 +330,7 @@ def listar_eventos(request):
     eventos = Evento.objects.all()
     eventos_por_pagina = EVENTOS_POR_PAGINA
     paginator = Paginator(eventos, eventos_por_pagina)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
 
     context = {
@@ -286,6 +341,7 @@ def listar_eventos(request):
 
     return render(request, "listar_eventos.html", context)
 
+
 def filtrar_eventos(request):
     nome = request.GET.get("nome_parcial")
 
@@ -293,11 +349,10 @@ def filtrar_eventos(request):
 
     if nome:
         eventos = eventos.filter(nome__icontains=nome)
-    
 
     eventos_por_pagina = EVENTOS_POR_PAGINA
     paginator = Paginator(eventos, eventos_por_pagina)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
 
     context = {
