@@ -135,7 +135,7 @@ def editar_usuario(request, id):
         "tipo_usuario": user.tipo_usuario,
         "usuario": user,
         "categorias": categorias_default,
-        "categorias_usuario": Usuario.pref_categorias.values_list("id", flat=True)
+        #"categorias_usuario": Usuario.pref_categorias.values_list("id", flat=True)
     }
     pprint.pprint(user.__dict__)
     return render(request, "editar_usuario.html", context)
