@@ -28,13 +28,11 @@ MSG_ERROR_AUTHENTICATION = (
 
 def get_tipo_usuario(usuario):
     user = Usuario.objects.filter(django_user=usuario)
-    print(user)
     return user[0].tipo_usuario if user else None
 
 
 def get_usuario(usuario):
     user = Usuario.objects.filter(django_user=usuario)
-    print(user)
     return user[0] if user else None
 
 
@@ -98,46 +96,65 @@ def cadastrar_usuario(request):
 
 
 def editar_usuario(request, id):
-    # tipo_usuario = None
-    # user = None
     categorias_default = Categoria.objects.all()
+    usuario = get_usuario(request.user)
+
     if request.method == "POST":
-        form_usuario = UserCreationForm(request.POST)
-        if form_usuario.is_valid():
-            nome = request.POST.get("nome")
-            email = request.POST.get("email")
-            telefone = request.POST.get("telefone")
-            whatsapp = request.POST.get("telefone")
-            tipo_usuario = request.POST.get("user_type")
-            razao_social = request.POST.get("razao_social")
-            selected_categories = request.POST.getlist("pref_categorias[]")
+        username = request.POST.get("username")
+        nome = request.POST.get("nome")
+        email = request.POST.get("email")
+        telefone = request.POST.get("telefone")
+        whatsapp = request.POST.get("telefone")
+        tipo_usuario = request.POST.get("user_type")
+        razao_social = request.POST.get("razao_social")
+        selected_categories = request.POST.getlist("pref_categorias[]")
+        selected_categories = request.POST.getlist("pref_categorias[]")
+        categorias_instancias = []
+        for categoria_id in selected_categories:
+            categoria = Categoria.objects.get(pk=categoria_id)
+            categorias_instancias.append(categoria)
+        try:
+            print("vou editar cadastro")
+            usuario = get_object_or_404(Usuario, pk=id)
+            django_user = request.user
 
-            try:
-                print("vou salvar cadastro")
+            pprint.pprint(usuario.__dict__)
+            pprint.pprint(django_user.username)
 
-                user = form_usuario.save()
-                django_user = user
-                cadastro_user = Usuario.objects.create(
-                    django_user=user,
-                    nome=nome,
-                    email=email,
-                    whats=telefone,
-                    tipo_usuario=tipo_usuario,
-                    razao_social=razao_social,
-                    pref_categorias=selected_categories,
-                )
-            except Exception as e:
-                print("nao salvou user")
-                print(e)
+            django_user.username = username if username else django_user.username
+            usuario.nome = nome if nome else usuario.nome
+            usuario.tipo_usuario = (
+                tipo_usuario if tipo_usuario else usuario.tipo_usuario
+            )
+            usuario.email = email if email else usuario.email
+            usuario.whats = telefone if telefone else usuario.whats
+            usuario.razao_social = (
+                razao_social if razao_social else usuario.razao_social
+            )
 
-    user = get_usuario(request.user)
+            usuario.save()
+            usuario.pref_categorias.set(categorias_instancias)
+
+            django_user.save()
+            print("editei user")
+            pprint.pprint(usuario.__dict__)
+            pprint.pprint(django_user.username)
+            pprint.pprint(usuario.pref_categorias.values_list("id", flat=True))
+            return redirect(
+                "meus_eventos"
+            )  # Redirecione para meus eventos após editar cadastro
+        except Exception as e:
+            print("nao editou user")
+            print(e)
+
     context = {
-        "tipo_usuario": user.tipo_usuario,
-        "usuario": user,
+        "tipo_usuario": usuario.tipo_usuario,
+        "usuario": usuario,
         "categorias": categorias_default,
-        #"categorias_usuario": Usuario.pref_categorias.values_list("id", flat=True)
+        "categorias_usuario": usuario.pref_categorias.values_list("id", flat=True),
     }
-    pprint.pprint(user.__dict__)
+    pprint.pprint(usuario.pref_categorias.values_list("id", flat=True))
+
     return render(request, "editar_usuario.html", context)
 
 
