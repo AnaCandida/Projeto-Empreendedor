@@ -54,13 +54,8 @@ class Usuario(models.Model):
     notificacoes = models.BooleanField(
         default=True, help_text="Preferência de notificações para o usuário."
     )
-
-    pref_categorias = ArrayField(
-        models.CharField(max_length=50),
-        blank=True,
-        null=True,
-        size=4,
-        help_text="Preferências de categorias em lista",
+    pref_categorias = models.ManyToManyField(
+        Categoria, help_text="Preferências de categorias em lista"
     )
 
     tipo_usuario = models.IntegerField(
