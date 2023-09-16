@@ -75,3 +75,14 @@ footer {
     position: absolute;
     z-index: 9999;
 }
+
+
+.btn-smallest {
+    padding: 0.1rem 0.3rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    border-radius: 0.2rem;
+    /* float: right; */
+    position: absolute; /* Define a posição absoluta */
+    right: 2rem; /* Alinha à esquerda */
+}

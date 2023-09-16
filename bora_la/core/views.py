@@ -14,6 +14,8 @@ import pytz
 from django.core.paginator import Paginator
 import environ
 from urllib.parse import quote
+from django.http import JsonResponse
+from django.contrib.auth.password_validation import validate_password
 
 env = environ.Env()
 env.read_env()
@@ -157,6 +159,38 @@ def editar_usuario(request, id):
 
     return render(request, "editar_usuario.html", context)
 
+
+def editar_senha(request, id):
+    categorias_default = Categoria.objects.all()
+    usuario = get_usuario(request.user)
+
+    context = {
+        "tipo_usuario": usuario.tipo_usuario,
+        "usuario": usuario,
+        "categorias": categorias_default,
+        "categorias_usuario": usuario.pref_categorias.values_list("id", flat=True),
+    }
+
+    if request.method == 'POST':
+            nova_senha = request.POST.get('nova_senha')
+            confirmar_senha = request.POST.get('confirmar_senha')
+            
+            # Validação da senha
+            try:
+                validate_password(nova_senha, usuario.django_user)
+                if nova_senha and nova_senha == confirmar_senha:
+                    usuario.django_user.set_password(nova_senha)
+                    usuario.django_user.save()
+                    login(request, usuario.django_user)
+
+                    return JsonResponse({'success': True, 'message': 'Senha atualizada com sucesso!'})
+                else:
+                    return JsonResponse({'success': False, 'error_message': 'As senhas não coincidem. Por favor, tente novamente.'})
+            except Exception as e:
+                error_message = ', '.join(e)
+                return JsonResponse({'success': False, 'error_message': error_message})
+
+    return redirect('editar_usuario', context)
 
 def logar_usuario(request):
     if request.method == "POST":

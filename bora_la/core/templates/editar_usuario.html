@@ -18,73 +18,120 @@
              <div class="card-body">
                  <h2 class="text-center mb-4">Editar Usuário</h2>
  
+                      <!-- parte da edicao de senha -->
+                      <div class="mt-3">
+                        <button type="button" class="btn btn-success btn-sm btn-smallest" data-bs-toggle="modal" data-bs-target="#modalEditarSenha">
+                          Editar Senha
+                        </button>
+                      </div>
+
+                      <div class="modal fade" id="modalEditarSenha" tabindex="-1" aria-labelledby="modalEditarSenhaLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="modalEditarSenhaLabel">Editar Senha</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- div para exibir mensagens -->
+                                <div id="messages">
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-{{ message.tags }}" role="alert">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                             <!-- Fim da div para mensagens -->
+
+                            <form method="post" action="{% url 'editar_senha' usuario.id %}" id="senhaForm">
+
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                  <label for="nova_senha" class="form-label">Nova Senha</label>
+                                  <input type="password" class="form-control" id="nova_senha" name="nova_senha">
+                                </div>
+                                <div class="mb-3">
+                                  <label for="confirmar_senha" class="form-label">Confirmar Senha</label>
+                                  <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha">
+                                </div>
+                                <button type="button" class="btn btn-success" id="btnSalvarSenha">Salvar Senha</button>
+
+                            </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                        <!-- Fim parte da edicao de senha -->
+
+
+
                  <form method="post" action="{% url 'editar_usuario' usuario.id %}" id="userForm" >
  
                      {% csrf_token %}
+
+                      
+                    <div class="mt-5">
+                        <div class="form-group mb-1">
+                            <label for="nome">Nome de usuário:</label>
+                            <input type="text" class="form-control" name="username" id="username" value="{{ user.username }}">
+                            <div class="error-message">{{ form_login.username.errors }}</div>
+                        </div>
+                    </div>
  
-                     <div class="form-group mb-1">
-                         <label for="nome">Nome de usuário:</label>
-                         <input type="text" class="form-control" name="username" id="username" value="{{ user.username }}">
-                         <div class="error-message">{{ form_login.username.errors }}</div>
+                     <div class="mt-3">
+                        <div class="form-group mb-1">
+                            <label for="user_type">Tipo de usuário:</label>
+                            <select class="form-select" name="user_type" id="user_type">
+                                <option value="1" {% if tipo_usuario == 1 %}selected{% endif %}>Usuário Geral</option>
+                                <option value="2" {% if tipo_usuario == 2 %}selected{% endif %}>Organizador de Evento</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-group mb-3" id="razao_social_container" style="{% if tipo_usuario != 2 %}display: none;{% endif %}">
+                            <label for="razao_social">Razão Social:</label>
+                            <input type="text" class="form-control" name="razao_social" id="razao_social" value="{{ usuario.razao_social }}">
+                        </div>
+                    <div>
+                    <div class="mt-3">
+                        <div class="form-group mb-1">
+                            <label for="nome">Nome:</label>
+                            <input type="text" class="form-control" name="nome" id="nome" value="{{ usuario.nome }}">
+                        </div>
+                    </div>
+ 
+                    <div class="mt-3">
+                        <div class="form-group mb-1">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email" id="email" value="{{ usuario.email }}" >
+    
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-group mb-3">
+                            <label for="telefone">Telefone:</label>
+                            <input type="tel" class="form-control" name="telefone" id="telefone" data-mask="(00) 00000-0000" value="{{ usuario.whats }}">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="whatsapp" id="whatsapp" {% if usuario.whatsapp %}checked{% endif %}>
+                                <label class="form-check-label" for="whatsapp">Whatsapp</label>
+                            </div>
+                        </div>
                      </div>
- 
-                     <!-- <div class="form-group mb-1">
-                         <label for="nome">Senha:</label>
-                         <input type="password" class="form-control" name="password1" id="password1">
-                         <div class="error-message">{{ form_usuario.password1.errors }}</div>
-                     </div>
- 
-                     <div class="form-group mb-4">
-                         <label for="nome">Confirmação de senha:</label>
-                         <input type="password" class="form-control" name="password2" id="password2">
-                         <div class="error-message">{{ form_usuario.password2.errors }}</div>
-                     </div> -->
- 
-                     <hr>
- 
-                     <div class="form-group mb-1">
-                         <label for="user_type">Tipo de usuário:</label>
-                         <select class="form-select" name="user_type" id="user_type">
-                             <option value="1" {% if tipo_usuario == 1 %}selected{% endif %}>Usuário Geral</option>
-                             <option value="2" {% if tipo_usuario == 2 %}selected{% endif %}>Organizador de Evento</option>
-                         </select>
-                     </div>
- 
-                     <div class="form-group mb-3" id="razao_social_container" style="{% if tipo_usuario != 2 %}display: none;{% endif %}">
-                         <label for="razao_social">Razão Social:</label>
-                         <input type="text" class="form-control" name="razao_social" id="razao_social" value="{{ usuario.razao_social }}">
-                     </div>
- 
-                     <div class="form-group mb-1">
-                         <label for="nome">Nome:</label>
-                         <input type="text" class="form-control" name="nome" id="nome" value="{{ usuario.nome }}">
-                     </div>
- 
-                     <div class="form-group mb-1">
-                         <label for="email">Email:</label>
-                         <input type="email" class="form-control" name="email" id="email" value="{{ usuario.email }}" >
- 
-                     </div>
- 
-                     <div class="form-group mb-3">
-                         <label for="telefone">Telefone:</label>
-                         <input type="tel" class="form-control" name="telefone" id="telefone" data-mask="(00) 00000-0000" value="{{ usuario.whats }}">
-                         <div class="form-check mt-2">
-                             <input class="form-check-input" type="checkbox" name="whatsapp" id="whatsapp" {% if usuario.whatsapp %}checked{% endif %}>
-                             <label class="form-check-label" for="whatsapp">Whatsapp</label>
-                         </div>
-                     </div>
- 
-                     <hr>
-                     <div class="form-group mb-4">
-                        <label for="pref_categorias">Categorias do evento (até 4):</label>
-                        <div class="form-check">
-                           {% for categoria in categorias %}
-                           <div class="form-check">
-                              <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"{% if categoria.id in categorias_usuario %} checked {% endif %}>
-                              <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
-                           </div>
-                           {% endfor %}
+
+                     <div class="mt-3">
+
+                        <div class="form-group mb-4">
+                            <label for="pref_categorias">Categorias do evento (até 4):</label>
+                            <div class="form-check">
+                            {% for categoria in categorias %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="pref_categorias[]" value="{{ categoria.id }}" id="categoria{{ categoria.id }}"{% if categoria.id in categorias_usuario %} checked {% endif %}>
+                                <label class="form-check-label" for="categoria{{ categoria.id }}">{{ categoria.nome }}</label>
+                            </div>
+                            {% endfor %}
+                            </div>
                         </div>
                      </div>
  
@@ -106,12 +153,12 @@
 
 <script>
 
-        $(document).ready(function() {
+    $(document).ready(function() {
 
-            let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
-            let maxChecked = 4;
+        let checkboxes = document.querySelectorAll('input[name="pref_categorias[]"]');
+        let maxChecked = 4;
             
-            checkboxes.forEach(function(checkbox) {
+        checkboxes.forEach(function(checkbox) {
                 checkbox.addEventListener('change', function() {
                     var checkedCount = document.querySelectorAll('input[name="pref_categorias[]"]:checked').length;
         
@@ -130,10 +177,57 @@
                 });
 
 
-            $('#user_type').on('change', function () {
+        $('#user_type').on('change', function () {
                 $('#razao_social_container').toggle(this.value === '2');
             });
+        
+        let csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        let $senhaForm = $('#senhaForm');
+
+        $('#btnSalvarSenha').on('click', function() {
+            console.log('Botão de Salvar Senha clicado');
+            console.log('Enviando requisição');
+            $.ajax({
+                url: $('#senhaForm').attr('action'),
+                type: 'post',
+                data: $('#senhaForm').serialize(),
+                headers: {
+                    'X-CSRFToken': csrf_token
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        $('#messages').html('<div class="alert alert-success" role="alert">' + response.message + '</div>');
+                        $senhaForm.find(':input').prop('disabled', true);
+                        $('#btnSalvarSenha').prop('disabled', true);
+                        console.log('Desabilitando campos do formulário');
+                        // location.reload();
+
+
+                    } else {
+                        $('#messages').html('<div class="alert alert-danger" role="alert">' + response.error_message + '</div>');
+                    }
+                },
+                error: function(response) {
+                    console.log(response);
+                    $('#messages').html('<div class="alert alert-danger" role="alert">Erro ao atualizar a senha.</div>');
+                    document.getElementById('senhaForm').reset();
+                }
+            });
         });
+        $('#modalEditarSenha').on('hidden.bs.modal', function () {
+        location.reload();
+    });
+
+
+});
+
+
+
+
+
+
+
 
 </script>
 {% endblock %}

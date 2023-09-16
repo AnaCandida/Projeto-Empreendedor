@@ -11,6 +11,7 @@ urlpatterns = [
     path("deslogar_usuario", deslogar_usuario, name="deslogar_usuario"),
     path("cadastrar_usuario", cadastrar_usuario, name="cadastrar_usuario"),
     path("editar_usuario/<int:id>", editar_usuario, name="editar_usuario"),
+    path("editar_senha/<int:id>", editar_senha, name="editar_senha"),
     path("cadastrar_evento", cadastrar_evento, name="cadastrar_evento"),
     path("listar_eventos", listar_eventos, name="listar_eventos"),
     path("visualizar_evento/<int:id>", visualizar_evento, name="visualizar_evento"),
