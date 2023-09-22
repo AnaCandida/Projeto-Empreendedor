@@ -178,7 +178,7 @@ class TestCadastroEvento(TestCase):
         data = {
             "nome_evento": "Evento Atualizado",
             "descricao_evento": "Nova descrição do evento",
-            "preco_evento": "40.00",
+            "preco_evento": "40,00",
             "image": new_image,
             "data_evento": "2023-09-03T00:00",
             "endereco_evento": "Nova localização do evento",
