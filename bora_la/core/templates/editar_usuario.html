@@ -75,7 +75,7 @@
                     <div class="mt-5">
                         <div class="form-group mb-1">
                             <label for="nome">Nome de usuário:</label>
-                            <input type="text" class="form-control" name="username" id="username" value="{{ user.username }}">
+                            <input type="text" class="form-control" name="username" id="username" value="{{ user.username }}" required>
                             <div class="error-message">{{ form_login.username.errors }}</div>
                         </div>
                     </div>
@@ -92,31 +92,27 @@
                     <div class="mt-3">
                         <div class="form-group mb-3" id="razao_social_container" style="{% if tipo_usuario != 2 %}display: none;{% endif %}">
                             <label for="razao_social">Razão Social:</label>
-                            <input type="text" class="form-control" name="razao_social" id="razao_social" value="{{ usuario.razao_social }}">
+                            <input type="text" class="form-control" name="razao_social" id="razao_social" value="{{ usuario.razao_social }}" required>
                         </div>
                     <div>
                     <div class="mt-3">
                         <div class="form-group mb-1">
                             <label for="nome">Nome:</label>
-                            <input type="text" class="form-control" name="nome" id="nome" value="{{ usuario.nome }}">
+                            <input type="text" class="form-control" name="nome" id="nome" value="{{ usuario.nome }}" required>
                         </div>
                     </div>
  
                     <div class="mt-3">
                         <div class="form-group mb-1">
                             <label for="email">Email:</label>
-                            <input type="email" class="form-control" name="email" id="email" value="{{ usuario.email }}" >
+                            <input type="email" class="form-control" name="email" id="email" value="{{ usuario.email }}" required>
     
                         </div>
                     </div>
                     <div class="mt-3">
                         <div class="form-group mb-3">
                             <label for="telefone">Telefone:</label>
-                            <input type="tel" class="form-control" name="telefone" id="telefone" data-mask="(00) 00000-0000" value="{{ usuario.whats }}">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" name="whatsapp" id="whatsapp" {% if usuario.whatsapp %}checked{% endif %}>
-                                <label class="form-check-label" for="whatsapp">Whatsapp</label>
-                            </div>
+                            <input type="tel" class="form-control" name="telefone" id="telefone" data-mask="(00) 00000-0000" value="{{ usuario.whats }}" required>
                         </div>
                      </div>
 
