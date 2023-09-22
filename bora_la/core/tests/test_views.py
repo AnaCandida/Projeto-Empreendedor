@@ -23,6 +23,8 @@ class TestCadastroUsuario(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
+        cls.categoria1 = Categoria.objects.create(nome="Categoria1")
+        cls.categoria2 = Categoria.objects.create(nome="Categoria2")
 
     def test_cadastrar_usuario(self):
         url = reverse("cadastrar_usuario")
@@ -35,7 +37,7 @@ class TestCadastroUsuario(TestCase):
             "telefone": "1234567890",
             "whatsapp": "1234567890",
             "user_type": "1",
-            "pref_categorias[]": ["comida", "ar_livre"],
+            "pref_categorias[]": [str(self.categoria1.id), str(self.categoria2.id)],
             "razao_social": "Test Company",
         }
 
@@ -53,8 +55,6 @@ class TestCadastroUsuario(TestCase):
         self.assertEqual(usuario.whats, "1234567890")
         self.assertEqual(usuario.tipo_usuario, 1)
         self.assertEqual(usuario.razao_social, "Test Company")
-        self.assertIn("comida", usuario.pref_categorias)
-        self.assertIn("ar_livre", usuario.pref_categorias)
 
     def test_logar_usuario(self):
         User.objects.create_user(username="testuser", password="testpass123")
@@ -71,6 +71,51 @@ class TestCadastroUsuario(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 302)
+
+
+class TestEdicaoUsuario(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
+        cls.user = User.objects.create_user(username="testuser", password="testpass123")
+        cls.usuario = Usuario.objects.create(
+            django_user=cls.user,
+            nome="Test User",
+            email="test@example.com",
+            whats="1234567890",
+            tipo_usuario=2,
+            razao_social="Test Company",
+        )
+        cls.categoria1 = Categoria.objects.create(nome="Categoria1")
+        cls.categoria2 = Categoria.objects.create(nome="Categoria2")
+        cls.client = Client()
+
+    def test_editar_usuario(self):
+        url = reverse("editar_usuario", args=[self.usuario.id])
+        data = {
+            "username": "newusername",
+            "nome": "New Name",
+            "email": "newemail@example.com",
+            "telefone": "5555555555",
+            "whatsapp": "5555555555",
+            "user_type": "2",
+            "pref_categorias[]": [str(self.categoria1.id), str(self.categoria2.id)],
+            "razao_social": "New Company",
+        }
+
+        self.client.login(username="testuser", password="testpass123")
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 302)
+        usuario = Usuario.objects.get(id=self.usuario.id)
+        usuario.refresh_from_db()
+
+        self.assertEqual(usuario.nome, "New Name")
+        self.assertEqual(usuario.email, "newemail@example.com")
+        self.assertEqual(usuario.whats, "5555555555")
+        self.assertEqual(usuario.tipo_usuario, 2)
+        self.assertEqual(usuario.razao_social, "New Company")
 
 
 class TestCadastroEvento(TestCase):

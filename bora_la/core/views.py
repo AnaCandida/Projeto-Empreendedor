@@ -16,6 +16,8 @@ import environ
 from urllib.parse import quote
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
+from django.utils import timezone
+
 
 env = environ.Env()
 env.read_env()
@@ -55,21 +57,25 @@ def cadastrar_usuario(request):
             tipo_usuario = request.POST.get("user_type")
             razao_social = request.POST.get("razao_social")
             selected_categories = request.POST.getlist("pref_categorias[]")
-
+            categorias_instancias = []
+            for categoria_id in selected_categories:
+                categoria = Categoria.objects.get(pk=categoria_id)
+                categorias_instancias.append(categoria)
             try:
                 print("vou salvar cadastro")
 
                 user = form_usuario.save()
                 django_user = user
                 cadastro_user = Usuario.objects.create(
-                    django_user=user,
+                    django_user=django_user,
                     nome=nome,
                     email=email,
                     whats=telefone,
                     tipo_usuario=tipo_usuario,
                     razao_social=razao_social,
-                    pref_categorias=selected_categories,
                 )
+                cadastro_user.pref_categorias.set(categorias_instancias)
+
             except Exception as e:
                 print("nao salvou user")
                 print(e)
@@ -171,26 +177,34 @@ def editar_senha(request, id):
         "categorias_usuario": usuario.pref_categorias.values_list("id", flat=True),
     }
 
-    if request.method == 'POST':
-            nova_senha = request.POST.get('nova_senha')
-            confirmar_senha = request.POST.get('confirmar_senha')
-            
-            # Validação da senha
-            try:
-                validate_password(nova_senha, usuario.django_user)
-                if nova_senha and nova_senha == confirmar_senha:
-                    usuario.django_user.set_password(nova_senha)
-                    usuario.django_user.save()
-                    login(request, usuario.django_user)
+    if request.method == "POST":
+        nova_senha = request.POST.get("nova_senha")
+        confirmar_senha = request.POST.get("confirmar_senha")
 
-                    return JsonResponse({'success': True, 'message': 'Senha atualizada com sucesso!'})
-                else:
-                    return JsonResponse({'success': False, 'error_message': 'As senhas não coincidem. Por favor, tente novamente.'})
-            except Exception as e:
-                error_message = ', '.join(e)
-                return JsonResponse({'success': False, 'error_message': error_message})
+        # Validação da senha
+        try:
+            validate_password(nova_senha, usuario.django_user)
+            if nova_senha and nova_senha == confirmar_senha:
+                usuario.django_user.set_password(nova_senha)
+                usuario.django_user.save()
+                login(request, usuario.django_user)
 
-    return redirect('editar_usuario', context)
+                return JsonResponse(
+                    {"success": True, "message": "Senha atualizada com sucesso!"}
+                )
+            else:
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error_message": "As senhas não coincidem. Por favor, tente novamente.",
+                    }
+                )
+        except Exception as e:
+            error_message = ", ".join(e)
+            return JsonResponse({"success": False, "error_message": error_message})
+
+    return redirect("editar_usuario", context)
+
 
 def logar_usuario(request):
     if request.method == "POST":
@@ -302,9 +316,11 @@ def editar_evento(request, id):
         descricao = request.POST.get("descricao_evento")
         user = request.user
         horario_str = request.POST.get("data_evento")
-        horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(
-            tzinfo=pytz.UTC
-        )
+        # horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(
+        #     tzinfo=pytz.UTC
+        # )
+        horario = timezone.make_aware(datetime.strptime(horario_str, "%Y-%m-%dT%H:%M"))
+
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         foto = request.FILES.get("image")
