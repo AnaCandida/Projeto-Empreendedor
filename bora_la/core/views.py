@@ -149,7 +149,7 @@ def editar_usuario(request, id):
             pprint.pprint(django_user.username)
             pprint.pprint(usuario.pref_categorias.values_list("id", flat=True))
             return redirect(
-                "meus_eventos"
+                "listar_eventos"
             )  # Redirecione para meus eventos após editar cadastro
         except Exception as e:
             print("nao editou user")
@@ -264,7 +264,9 @@ def cadastrar_evento(request):
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         if preco_ingressos:
-            preco_ingressos = preco_ingressos.replace(",", ".")
+            preco_ingressos = preco_ingressos.replace(".", "")
+            preco_ingressos = preco_ingressos.replace(",", ".")            
+            print (preco_ingressos)
             preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
@@ -326,6 +328,7 @@ def editar_evento(request, id):
         foto = request.FILES.get("image")
         preco_ingressos = request.POST.get("preco_evento")
         if preco_ingressos:
+            preco_ingressos = preco_ingressos.replace(".", "")
             preco_ingressos = preco_ingressos.replace(",", ".")
             preco_ingressos = Decimal(preco_ingressos)
         categorias = request.POST.getlist("pref_categorias[]")
