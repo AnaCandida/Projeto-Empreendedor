@@ -265,8 +265,8 @@ def cadastrar_evento(request):
         preco_ingressos = request.POST.get("preco_evento")
         if preco_ingressos:
             preco_ingressos = preco_ingressos.replace(".", "")
-            preco_ingressos = preco_ingressos.replace(",", ".")            
-            print (preco_ingressos)
+            preco_ingressos = preco_ingressos.replace(",", ".")
+            print(preco_ingressos)
             preco_ingressos = Decimal(preco_ingressos)
         foto = request.FILES.get("image")
         categorias = request.POST.getlist("pref_categorias[]")
