@@ -8,10 +8,19 @@ from core.models import Categoria
 
 
 def populate_categories():
-    categorias = ["Comida", "Ar Livre", "Negocio Local", "Cultura", "Esporte", "Musica"]
+    categorias = [
+        "Comida",
+        "Ar Livre",
+        "Negocio Local",
+        "Cultura",
+        "Esporte",
+        "Musica",
+    ]
 
     for categoria_nome in categorias:
-        categoria, created = Categoria.objects.get_or_create(nome=categoria_nome)
+        categoria, created = Categoria.objects.get_or_create(
+            nome=categoria_nome
+        )
         if created:
             print(f"Criada categoria: {categoria.nome}")
         else:

@@ -46,13 +46,11 @@
                         <span class="card-text">Nenhuma categoria associada</span>
                      {% endif %}
                      <!-- Fim da renderização das categorias -->
-
                   {% if evento.localizacao %}
                   <div class="embed-responsive embed-responsive-16by9"></div>
-                     <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
+                     <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ localizacao }}"></iframe>
                      </div>
                   {% endif %}
-
 
                   </div>
                </div>

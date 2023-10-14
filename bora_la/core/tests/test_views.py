@@ -37,7 +37,10 @@ class TestCadastroUsuario(TestCase):
             "telefone": "1234567890",
             "whatsapp": "1234567890",
             "user_type": "1",
-            "pref_categorias[]": [str(self.categoria1.id), str(self.categoria2.id)],
+            "pref_categorias[]": [
+                str(self.categoria1.id),
+                str(self.categoria2.id),
+            ],
             "razao_social": "Test Company",
         }
 
@@ -77,7 +80,9 @@ class TestEdicaoUsuario(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
-        cls.user = User.objects.create_user(username="testuser", password="testpass123")
+        cls.user = User.objects.create_user(
+            username="testuser", password="testpass123"
+        )
         cls.usuario = Usuario.objects.create(
             django_user=cls.user,
             nome="Test User",
@@ -99,7 +104,10 @@ class TestEdicaoUsuario(TestCase):
             "telefone": "5555555555",
             "whatsapp": "5555555555",
             "user_type": "2",
-            "pref_categorias[]": [str(self.categoria1.id), str(self.categoria2.id)],
+            "pref_categorias[]": [
+                str(self.categoria1.id),
+                str(self.categoria2.id),
+            ],
             "razao_social": "New Company",
         }
 
@@ -122,7 +130,9 @@ class TestCadastroEvento(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
-        cls.user = User.objects.create_user(username="testuser", password="testpass123")
+        cls.user = User.objects.create_user(
+            username="testuser", password="testpass123"
+        )
         cls.usuario = Usuario.objects.create(
             django_user=cls.user,
             nome="Test User",
@@ -138,7 +148,9 @@ class TestCadastroEvento(TestCase):
     def test_cadastrar_evento(self):
         url = reverse("cadastrar_evento")
         image_content = b"image_content"
-        image = SimpleUploadedFile("test.png", image_content, content_type="image/png")
+        image = SimpleUploadedFile(
+            "test.png", image_content, content_type="image/png"
+        )
         data = {
             "nome_evento": "Meu Evento",
             "descricao_evento": "Descrição do evento",
@@ -146,7 +158,10 @@ class TestCadastroEvento(TestCase):
             "image": image,
             "data_evento": "2023-09-01T00:00",
             "endereco_evento": "Localização do evento",
-            "pref_categorias[]": [str(self.categoria1.id), str(self.categoria2.id)],
+            "pref_categorias[]": [
+                str(self.categoria1.id),
+                str(self.categoria2.id),
+            ],
         }
 
         self.client.force_login(self.user)
@@ -197,7 +212,9 @@ class TestCadastroEvento(TestCase):
         self.assertEqual(evento.nome, "Evento Atualizado")
         self.assertEqual(evento.descricao, "Nova descrição do evento")
         self.assertEqual(evento.preco, Decimal("40.00"))
-        self.assertEqual(evento.horario.strftime("%Y-%m-%dT%H:%M"), "2023-09-03T00:00")
+        self.assertEqual(
+            evento.horario.strftime("%Y-%m-%dT%H:%M"), "2023-09-03T00:00"
+        )
         self.assertEqual(evento.localizacao, "Nova localização do evento")
 
         # Verifique se as categorias foram atualizadas corretamente
