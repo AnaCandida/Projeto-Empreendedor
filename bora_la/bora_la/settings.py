@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
+    'social_django',
     "core",
 ]
 
@@ -70,13 +71,26 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-            ],
-        },
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+        ]},
     },
 ]
 
 WSGI_APPLICATION = "bora_la.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'login'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '330702144846-druhsabsdi1po9p9njdep9c6kr6pscah.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
