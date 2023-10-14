@@ -19,8 +19,7 @@ urlpatterns = [
     path("meus_eventos", meus_eventos, name="meus_eventos"),
     path("filtrar_eventos", filtrar_eventos, name="filtrar_eventos"),
     path("", index, name="index"),
-    path('social-auth/', include('social_django.urls', namespace='social-auth')),
-
+    path("social-auth/", include("social_django.urls", namespace="social-auth")),
 ]
 
 if settings.DEBUG:
