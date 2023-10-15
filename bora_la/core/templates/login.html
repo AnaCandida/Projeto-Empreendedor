@@ -17,6 +17,25 @@
       font-size: small;
    }
 
+   .btn-google {
+        /* background-color: green; */
+        border-color: green;
+    }
+
+    .btn-google:hover {
+        background-color: #17774a;
+        border-color: rgb(244, 250, 244);
+        color: rgb(244, 250, 244) !important;
+
+    }
+
+    .btn-google .white {
+        color: rgb(51, 49, 49) !important;
+    }
+    .btn-google:hover .white:hover {
+        color: rgb(244, 250, 244) !important;
+    }
+
 </style>
       <div class="container mt-5">
       <div class="row justify-content-center align-items-start vh-100">
@@ -26,7 +45,7 @@
             </div>
             <div class="card shadow py-3 px-3">
                <!-- <div class="card-header">Login</div> -->
-               <div class="card-body">
+               <div class="card-body ">
                   <h2 class="text-center mb-4">Entrar</h2>
                   <form method="post">
                      {% csrf_token %}
@@ -83,33 +102,19 @@
                      <hr class="my-4">
                      <!-- Linha reta -->
                      <div class="d-grid">
-                        <button type="button" class="btn btn-success btn-block mt-3 fw-bold py-2 shadow-sm">
+                        <!-- <button type="button" class="btn btn-success btn-block mt-3 fw-bold py-2 shadow-sm">
                            <i class="fa fa-google"></i>
                            <a class="white" href="{% url 'social:begin' 'google-oauth2' %}">
                               Login com Google-teste
                            </a>
-                        </button>
+                        </button> -->
 
-                        <button type="button" class="btn btn-outline-secondary btn-block py-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#googleLoginModal">
-                        <i class="bi bi-google me-2"></i> Logar com o Google
-                        </button>
-                        <div class="modal fade" id="googleLoginModal" tabindex="-1" aria-labelledby="googleLoginModalLabel" aria-hidden="true">
-                           <div class="modal-dialog">
-                              <div class="modal-content">
-                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="googleLoginModalLabel">teste</h5>
-
-                                 </div>
-                                 <div class="modal-body">
-                                    <!-- Conteúdo do pop-up a ser desenvolvido no projeto 2 -->
-                                    Conteúdo a ser desenvolvido no projeto 2.
-                                 </div>
-                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
+                        <button type="button" class="btn btn-block py-2 shadow-sm btn-google">
+                           <i class="bi bi-google me-2 "></i> 
+                           <a class="white" href="{% url 'social:begin' 'google-oauth2' %}">
+                               Logar com o Google
+                           </a>
+                       </button>
                   </form>
                   </div>
                </div>
