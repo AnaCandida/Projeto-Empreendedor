@@ -10,6 +10,34 @@
       </div>
 {% endblock %}
 {% block content %}
+<style>
+      .rating {
+         font-size: 30px;
+      }
+
+      .rating input[type="radio"] {
+         display: none;
+      }
+
+      .rating label {
+         cursor: pointer;
+         color: #fff;
+         border: 1px solid #000; /* Adiciona borda preta */
+         padding: 0.2em 0.3em; /* Adiciona algum espaçamento interno */
+      }
+
+      .rating label::before {
+         content: '\2605'; /* Código Unicode para a estrela vazia */
+         display: block;
+      }
+
+      .rating input[type="radio"]:checked + label::before {
+         content: '\2605'; /* Código Unicode para a estrela preenchida */
+         color: #4caf50; /* Verde */
+      }
+</style>
+
+<!--  -->
    <div class="container mt-5">
       <div class="row justify-content-center">
          <div class="col-md-10">
@@ -22,6 +50,65 @@
                      <img src="{{ evento.foto.url }}" class="card-img-top img-fluid rounded" alt="{{ evento.nome }}">
                   {% endif %}
                   <div class="card-body">
+                     <!-- AVALIAÇÃO -->
+                        <div class="mt-3">
+                           <button type="button" class="btn btn-success btn-sm btn-smallest" data-bs-toggle="modal"
+                              data-bs-target="#modalAvaliacaoEvento"{% if not evento_passou %}disabled{% endif %} >
+                                 <div class="d-flex align-items-center justify-content-center">
+                                    <div class="stars">
+                                       <span>★★★★★</span>
+                                    </div>
+                                 </div>
+                                 <div class="text-center">Avaliar Evento</div>
+                           </button>
+                        </div>
+                        <div class="modal fade" id="modalAvaliacaoEvento" tabindex="-1" aria-labelledby="modalAvaliacaoEvento" aria-hidden="true">
+                           <div class="modal-dialog">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+
+                                    <h5 class="modal-title" id="modalEditarSenhaLabel">Avaliar Evento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body">
+                                    <!-- div para exibir mensagens -->
+                                    <div id="messages">
+                                       {% if messages %}
+                                       {% for message in messages %}
+                                       <div class="alert alert-{{ message.tags }}" role="alert">
+                                          {{ message }}
+                                       </div>
+                                       {% endfor %}
+                                       {% endif %}
+                                    </div>
+                                 </div>
+                                    <!-- Fim da div para mensagens -->
+
+                                    <form id="avaliacaoForm" method="post" action="#" id="senhaForm">
+                                       {% csrf_token %}
+                                       <div class="mb-3">
+                                          <label for="nota" class="form-label">Nota (de 1 a 5)</label>
+                                          <!-- <input type="password" class="form-control" id="nota" name="nota"> -->
+                                             <div class="rating">
+                                             <span id="s1" onclick="Avaliar(1)">☆</span>
+                                             <span id="s2"onclick="Avaliar(2)">☆</span>
+                                             <span id="s3"onclick="Avaliar(3)">☆</span>
+                                             <span id="s4"onclick="Avaliar(4)">☆</span>
+                                             <span id="s5"onclick="Avaliar(5)">☆</span>
+                                             <p id="rating">0</p>
+                                             </div>
+                                       </div>
+                                       <div class="mb-3">
+                                          <label for="comentario" class="form-label">Deixe aqui seu comentário</label>
+                                          <textarea class="form-control" id="comentario" rows="3" maxlength="400"></textarea>
+
+                                       </div>
+                                       <button type="button" class="btn btn-success" id="btnSalvarAvaliacao">Enviar</button>
+                                    </form>
+                              </div>
+                           </div>
+                        </div>
+                     <!-- FIM AVALIAÇÃO -->
                      <p class="card-text description">{{ evento.descricao }} </p>
                      <p class="card-text"><i class="bi bi-clock"></i> <strong>Horário:</strong> {{ evento.horario }}</p>
                      <!-- <p class="card-text"><i class="bi bi-currency-dollar"></i> <strong>Preço:</strong> R$ {{ evento.preco }}</p> -->
@@ -63,5 +150,32 @@
       </div>
    </div>
 
-   
+<!-- Arquivos JS do Bootstrap e jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<script>
+   function Avaliar(nota) {
+      var avaliacao = 0;
+
+      // Atualiza as estrelas clicadas
+      for (var i = 1; i <= 5; i++) {
+         var elemento = document.getElementById("s" + i);
+         if (i <= nota) {
+            elemento.innerHTML = "★";
+            elemento.style.color = "green";
+         } else {
+            elemento.innerHTML = "☆";
+            elemento.style.color = "black";
+         }
+      }
+
+      // Atualiza a avaliação
+      avaliacao = nota;
+
+      document.getElementById('rating').innerHTML = avaliacao;
+   }
+
+</script>
+
    {% endblock %}

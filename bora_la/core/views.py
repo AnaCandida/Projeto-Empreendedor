@@ -382,11 +382,14 @@ def visualizar_evento(request, id):
     evento = get_object_or_404(Evento, pk=id)
     # Codifica a localizacao para usar na URL do Google Maps
     localizacao = quote(evento.localizacao)
+
+    #TODO checar data do evento para enviar ao front um boolean se pode ou nao avaliar o evento
     context = {
         "evento": evento,
         "tipo_usuario": tipo_usuario if tipo_usuario else 0,
         "API_KEY": api_key,
         "localizacao": localizacao,  # Adiciona a localizacao codificada ao contexto
+        'evento_passou': False
     }
     print(api_key)
     print(evento.localizacao)
