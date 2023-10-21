@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from core.models import Usuario, Evento, Categoria
+from core.models import Usuario, Evento, Categoria, Avaliacao
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 import pprint
@@ -17,6 +17,8 @@ from urllib.parse import quote
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
 from django.utils import timezone
+from django.shortcuts import redirect
+from django.contrib import messages
 
 
 env = environ.Env()
@@ -34,15 +36,12 @@ def get_tipo_usuario(usuario):
     user = Usuario.objects.filter(django_user=usuario)
     return user[0].tipo_usuario if user else None
 
-
 def get_usuario(usuario):
     user = Usuario.objects.filter(django_user=usuario)
     return user[0] if user else None
 
-
 def index(request):
     return render(request, "index.html")
-
 
 def cadastrar_usuario(request):
     categorias_disponiveis = Categoria.objects.all()
@@ -101,7 +100,6 @@ def cadastrar_usuario(request):
             "cadastro.html",
             {"form_usuario": form_usuario, "categorias": categorias_disponiveis},
         )
-
 
 def editar_usuario(request, id):
     categorias_default = Categoria.objects.all()
@@ -165,7 +163,6 @@ def editar_usuario(request, id):
 
     return render(request, "editar_usuario.html", context)
 
-
 def editar_senha(request, id):
     categorias_default = Categoria.objects.all()
     usuario = get_usuario(request.user)
@@ -205,7 +202,6 @@ def editar_senha(request, id):
 
     return redirect("editar_usuario", context)
 
-
 def logar_usuario(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -222,12 +218,10 @@ def logar_usuario(request):
 
     return render(request, "login.html", {"form_login": form_login})
 
-
 @login_required(login_url="/logar_usuario")
 def deslogar_usuario(request):
     logout(request)
     return redirect("index")
-
 
 @login_required
 def meus_eventos(request):
@@ -249,7 +243,6 @@ def meus_eventos(request):
             "tipo_usuario": tipo_usuario,
         }
         return render(request, "meus_eventos.html", context)
-
 
 def cadastrar_evento(request):
     tipo_usuario = None
@@ -306,7 +299,6 @@ def cadastrar_evento(request):
     }
 
     return render(request, "cadastro_evento.html", context)
-
 
 def editar_evento(request, id):
     tipo_usuario = None
@@ -373,7 +365,6 @@ def editar_evento(request, id):
 
     return render(request, "editar_evento.html", context)
 
-
 def visualizar_evento(request, id):
     api_key = env("API_KEY")
     tipo_usuario = None
@@ -383,18 +374,19 @@ def visualizar_evento(request, id):
     # Codifica a localizacao para usar na URL do Google Maps
     localizacao = quote(evento.localizacao)
 
-    #TODO checar data do evento para enviar ao front um boolean se pode ou nao avaliar o evento
+    agora = datetime.today().strftime("%Y-%m-%d %H:%M")
+    data_evento = evento.horario.strftime("%Y-%m-%d %H:%M")
+
     context = {
         "evento": evento,
         "tipo_usuario": tipo_usuario if tipo_usuario else 0,
         "API_KEY": api_key,
         "localizacao": localizacao,  # Adiciona a localizacao codificada ao contexto
-        'evento_passou': False
+        'evento_passou': agora > data_evento
     }
     print(api_key)
     print(evento.localizacao)
     return render(request, "visualizar_evento.html", context)
-
 
 def listar_eventos(request):
     tipo_usuario = None
@@ -415,7 +407,6 @@ def listar_eventos(request):
 
     return render(request, "listar_eventos.html", context)
 
-
 def filtrar_eventos(request):
     nome = request.GET.get("nome_parcial")
 
@@ -435,3 +426,25 @@ def filtrar_eventos(request):
     }
 
     return render(request, "listar_eventos.html", context)
+
+
+def avaliar_evento(request, id):
+    evento = get_object_or_404(Evento, pk=id)
+
+    if request.method == "POST":
+        # Verificar se o usuário já avaliou o evento
+        if request.user.is_authenticated:
+            usuario = get_usuario(request.user)
+            if Avaliacao.objects.filter(usuario_id=usuario, evento_id=evento).exists():
+                messages.warning(request, 'Você já avaliou este evento.')
+            else:
+                # Processar a avaliação
+                nota = request.POST.get('nota')
+                comentario = request.POST.get('comentario')
+                avaliacao = Avaliacao(usuario_id=usuario, evento_id=evento, nota=nota, comentario=comentario)
+                avaliacao.save()
+                messages.success(request, 'Sua avaliação foi enviada com sucesso!')
+        else:
+            messages.error(request, 'Você precisa estar logado para fazer uma avaliação')
+
+    return redirect('visualizar_evento', id=id)

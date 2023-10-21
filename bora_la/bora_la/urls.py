@@ -15,6 +15,7 @@ urlpatterns = [
     path("cadastrar_evento", cadastrar_evento, name="cadastrar_evento"),
     path("listar_eventos", listar_eventos, name="listar_eventos"),
     path("visualizar_evento/<int:id>", visualizar_evento, name="visualizar_evento"),
+    path("avaliar_evento/<int:id>", avaliar_evento, name="avaliar_evento"),
     path("editar_evento/<int:id>", editar_evento, name="editar_evento"),
     path("meus_eventos", meus_eventos, name="meus_eventos"),
     path("filtrar_eventos", filtrar_eventos, name="filtrar_eventos"),
