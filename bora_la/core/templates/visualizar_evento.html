@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load social_share %}
 {% block title %}Visualizar Evento{% endblock %}
 <!-- Bloco para inserção do botão de voltar para LISTAGEM -->
 {% block home_button %}
@@ -34,7 +35,8 @@
                            R$ {{ evento.preco }}
                         {% endif %}
                      </p>
-
+                     {% post_to_whatsapp object_or_url "Share via WhatsApp" %}
+                     {% post_to_facebook object_or_url "Post to Facebook!" %}
                      <!-- Renderização das categorias -->
                      {% if evento.categorias_id.count %}
                         <!-- <p class="card-text"><strong>Categorias:</strong> -->
@@ -52,7 +54,7 @@
                      <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
                      </div>
                   {% endif %}
-
+                  
 
                   </div>
                </div>
