@@ -35,8 +35,14 @@
                            R$ {{ evento.preco }}
                         {% endif %}
                      </p>
-                     {% post_to_whatsapp object_or_url "Share via WhatsApp" %}
-                     {% post_to_facebook object_or_url "Post to Facebook!" %}
+                     
+                     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" type="text/css" />
+ 
+                     <p> 
+                        {% post_to_facebook object_or_url '<i class="fab fa-facebook-square fa-lg"></i>'%} 
+                        {% post_to_whatsapp object_or_url '<i class="fab fa-whatsapp-square fa-lg" style="color: #1cc110;"></i>'%}
+                     </p>   
+                    
                      <!-- Renderização das categorias -->
                      {% if evento.categorias_id.count %}
                         <!-- <p class="card-text"><strong>Categorias:</strong> -->
