@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django import forms
 from django.contrib.postgres.fields import ArrayField
+from django.urls import reverse
 
 
 class Categoria(models.Model):
@@ -96,6 +97,9 @@ class Evento(models.Model):
     horario = models.DateTimeField(null=False)
     localizacao = models.TextField(null=False)
     categorias_id = models.ManyToManyField(Categoria)
+
+    def get_absolute_url(self):
+        return reverse('visualizar_evento', args=[str(self.id)])
 
 
 class Notificacao(models.Model):
