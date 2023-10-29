@@ -5,71 +5,84 @@
 <!-- Bloco para inserção do botão de voltar para LISTAGEM -->
 {% block home_button %}
 <div class="position-relative mx-1">
-         <a href="{% url 'listar_eventos' %}" class="btn btn-sm btn-success">
-         <i class="bi bi-arrow-left"></i> Voltar
-         </a>
-      </div>
+   <a href="{% url 'listar_eventos' %}" class="btn btn-sm btn-success">
+      <i class="bi bi-arrow-left"></i> Voltar
+   </a>
+</div>
 {% endblock %}
 {% block content %}
-   <div class="container mt-5">
-      <div class="row justify-content-center">
-         <div class="col-md-10">
-            <h5 class="mb-1">Detalhes do Evento</h5>
-            <h1 class="mb-4">{{ evento.nome }}</h1>
+<style>
+   .custom-container {
+      width: 5rem;
+   }
 
-            {% if evento %}
-               <div class="card shadow-lg">
-                  {% if evento.foto %}
-                     <img src="{{ evento.foto.url }}" class="card-img-top img-fluid rounded" alt="{{ evento.nome }}">
+   .custom-instagram-color {
+    color: #bc2a8d; /* Cor oficial do Instagram */
+   }
+</style>
+<div class="container mt-5">
+   <div class="row justify-content-center">
+      <div class="col-md-10">
+         <h5 class="mb-1">Detalhes do Evento</h5>
+         <h1 class="mb-4">{{ evento.nome }}</h1>
+         {% if evento %}
+         <div class="card shadow-lg">
+            {% if evento.foto %}
+            <img src="{{ evento.foto.url }}" class="card-img-top img-fluid rounded" alt="{{ evento.nome }}">
+            {% endif %}
+            <div class="card-body">
+               <p class="card-text description">{{ evento.descricao }} </p>
+               <p class="card-text"><i class="bi bi-clock"></i> <strong>Horário:</strong> {{ evento.horario }}</p>
+               <!-- <p class="card-text"><i class="bi bi-currency-dollar"></i> <strong>Preço:</strong> R$ {{ evento.preco }}</p> -->
+               <p class="card-text"><i class="bi bi-geo-alt"></i> <strong>Localização:</strong> {{ evento.localizacao }}
+               </p>
+               <p class="card-text">
+                  <strong>Preço:</strong>
+                  {% if evento.preco == 0 %}
+                  Gratuito
+                  {% else %}
+                  R$ {{ evento.preco }}
                   {% endif %}
-                  <div class="card-body">
-                     <p class="card-text description">{{ evento.descricao }} </p>
-                     <p class="card-text"><i class="bi bi-clock"></i> <strong>Horário:</strong> {{ evento.horario }}</p>
-                     <!-- <p class="card-text"><i class="bi bi-currency-dollar"></i> <strong>Preço:</strong> R$ {{ evento.preco }}</p> -->
-                     <p class="card-text"><i class="bi bi-geo-alt"></i> <strong>Localização:</strong> {{ evento.localizacao }}</p>
-                     <p class="card-text">
-                        <strong>Preço:</strong>
-                        {% if evento.preco == 0 %}
-                           Gratuito
-                        {% else %}
-                           R$ {{ evento.preco }}
-                        {% endif %}
-                     </p>
-                     
-                     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" type="text/css" />
- 
-                     <p> 
-                        {% post_to_facebook object_or_url '<i class="fab fa-facebook-square fa-lg"></i>'%} 
+               </p>
+               <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" type="text/css" />
+               <div class="d-flex justify-content-between my-2 custom-container">
+   
+                  <div>
+                     {% post_to_facebook object_or_url '<i class="fab fa-facebook-square fa-lg"></i>'%}
+                  </div>
+                  <div>
                         {% post_to_whatsapp object_or_url '<i class="fab fa-whatsapp-square fa-lg" style="color: #1cc110;"></i>'%}
-                     </p>   
-                    
-                     <!-- Renderização das categorias -->
-                     {% if evento.categorias_id.count %}
-                        <!-- <p class="card-text"><strong>Categorias:</strong> -->
-                           {% for categoria in evento.categorias_id.all %}
-                              <span class="badge bg-secondary">{{ categoria.nome }}</span>
-                           {% endfor %}
-                        </p>
-                     {% else %}
-                        <span class="card-text">Nenhuma categoria associada</span>
-                     {% endif %}
-                     <!-- Fim da renderização das categorias -->
-
-                  {% if evento.localizacao %}
-                  <div class="embed-responsive embed-responsive-16by9"></div>
-                     <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
-                     </div>
-                  {% endif %}
-                  
-
+                  </div>
+                  <div>
+                      <a href="https://www.instagram.com/create/story">
+                           <i class="fab fa-instagram fa-lg custom-instagram-color"></i>
+                     </a>
                   </div>
                </div>
-            {% else %}
-               <p>Evento não encontrado.</p>
+
+               <!-- Renderização das categorias -->
+               {% if evento.categorias_id.count %}
+               <!-- <p class="card-text"><strong>Categorias:</strong> -->
+               {% for categoria in evento.categorias_id.all %}
+               <span class="badge bg-secondary">{{ categoria.nome }}</span>
+               {% endfor %}
+               </p>
+               {% else %}
+               <span class="card-text">Nenhuma categoria associada</span>
+               {% endif %}
+               <!-- Fim da renderização das categorias -->
+               {% if evento.localizacao %}
+               <div class="embed-responsive embed-responsive-16by9"></div>
+               <iframe class="embed-responsive-item"
+                  src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
+            </div>
             {% endif %}
          </div>
       </div>
+      {% else %}
+      <p>Evento não encontrado.</p>
+      {% endif %}
    </div>
-
-   
-   {% endblock %}
+</div>
+</div>
+{% endblock %}
