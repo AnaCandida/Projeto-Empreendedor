@@ -12,6 +12,49 @@
 {% endblock %}
 {% block content %}
 <style>
+      .rating {
+         font-size: 30px;
+      }
+
+      .rating input[type="radio"] {
+         display: none;
+      }
+
+      .rating label {
+         cursor: pointer;
+         color: #fff;
+         border: 1px solid #000; /* Adiciona borda preta */
+         padding: 0.2em 0.3em; /* Adiciona algum espaçamento interno */
+      }
+
+      .rating label::before {
+         content: '\2605'; /* Código Unicode para a estrela vazia */
+         display: block;
+      }
+
+      .rating input[type="radio"]:checked + label::before {
+         content: '\2605'; /* Código Unicode para a estrela preenchida */
+         color: #4caf50; /* Verde */
+      }
+
+      .form-avaliacao{
+         padding: 1rem;;
+      }
+
+      .avaliacao-info {
+         font-size: 16px; /* Ajuste o tamanho da fonte conforme necessário */
+         color: #367b38; /* Escolha a cor do texto que desejar */
+         text-align: center; /* Centraliza o texto */
+         margin: 10px 0; /* Adiciona um espaçamento na parte superior e inferior do parágrafo */
+      }
+
+      #avaliacao-disponivel {
+         text-align: center;
+      }
+</style>
+
+<!--  -->
+<style>
    .custom-container {
       width: 5rem;
    }
@@ -24,14 +67,88 @@
 <div class="container mt-5">
    <div class="row justify-content-center">
       <div class="col-md-10">
+                  <!-- Botão de Avaliação -->
+                  <button type="button" class="btn btn-success btn-sm btn-smallest" data-bs-toggle="modal"
+                  data-bs-target="#modalAvaliacaoEvento"{% if not evento_passou %}disabled{% endif %} >
+                     <div class="d-flex align-items-center justify-content-center">
+                        <div class="stars">
+                           <span>★★★★★</span>
+                        </div>
+                     </div>
+                     <div class="text-center avaliar-texto">Avaliar Evento</div>
+               </button>
+
          <h5 class="mb-1">Detalhes do Evento</h5>
          <h1 class="mb-4">{{ evento.nome }}</h1>
+            <div id="messages">
+               {% if messages %}
+                   {% for message in messages %}
+                   <div class="alert {% if message.tags == 'error' %}alert-danger{% endif %}   alert-{{ message.tags }}" role="alert">
+                     {{ message }}
+                       </div>
+                   {% endfor %}
+               {% endif %}
+           </div>
          {% if evento %}
          <div class="card shadow-lg">
             {% if evento.foto %}
             <img src="{{ evento.foto.url }}" class="card-img-top img-fluid rounded" alt="{{ evento.nome }}">
             {% endif %}
             <div class="card-body">
+                     <!-- AVALIAÇÃO MODAL -->
+
+                        <div class="modal fade" id="modalAvaliacaoEvento" tabindex="-1" aria-labelledby="modalAvaliacaoEvento" aria-hidden="true">
+                           <div class="modal-dialog">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+
+                                    <h5 class="modal-title" id="modalEditarSenhaLabel">Avaliar Evento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body form-avaliacao">
+                                    <!-- div para exibir mensagens -->
+                                    <div id="messages">
+                                       {% if messages %}
+                                       {% for message in messages %}
+                                       <div class="alert {% if message.tags == 'error' %}alert-danger{% endif %}   alert-{{ message.tags }}" role="alert">
+                                          {{ message }}
+                                       </div>
+                                       {% endfor %}
+                                       {% endif %}
+                                    </div>
+                                 </div>
+                                    <!-- Fim da div para mensagens -->
+
+                                    <form id="avaliacaoForm" method="post" action="{% url 'avaliar_evento' evento.id %}">
+                                       {% csrf_token %}
+                                       <div class="mb-3 form-avaliacao">
+
+                                          <label for="nota" class="form-label ">Nota (de 1 a 5)</label>
+                                             <div class="rating">
+                                             <span id="s1" onclick="Avaliar(1)">☆</span>
+                                             <span id="s2"onclick="Avaliar(2)">☆</span>
+                                             <span id="s3"onclick="Avaliar(3)">☆</span>
+                                             <span id="s4"onclick="Avaliar(4)">☆</span>
+                                             <span id="s5"onclick="Avaliar(5)">☆</span>
+                                             <input type="hidden" id="nota" name="nota"> <!-- Adicionado campo input hidden para nota -->
+                                          </div>
+                                       </div>
+                                       <div class="mb-3 form-avaliacao">
+                                          <label for="comentario" class="form-label">Deixe aqui seu comentário (opcional)</label>
+                                          <textarea class="form-control" id="comentario" name="comentario" rows="3" maxlength="400"></textarea>
+                                       </div>
+                                       <div class="form-avaliacao">
+                                          <p class="avaliacao-info">Sua avaliação não ficará pública, mas será encaminhada aos organizadores do evento!</p>
+                                      </div>
+
+                                       <div class="mb-3 d-flex justify-content-center">
+                                          <button type="submit" class="btn btn-success" id="btnSalvarAvaliacao">Enviar</button>
+                                      </div>
+                                    </form>
+                              </div>
+                           </div>
+                        </div>
+                     <!-- FIM AVALIAÇÃO -->
                <p class="card-text description">{{ evento.descricao }} </p>
                <p class="card-text"><i class="bi bi-clock"></i> <strong>Horário:</strong> {{ evento.horario }}</p>
                <!-- <p class="card-text"><i class="bi bi-currency-dollar"></i> <strong>Preço:</strong> R$ {{ evento.preco }}</p> -->
@@ -64,29 +181,33 @@
                   </div>
                </div>
 
-               <!-- Renderização das categorias -->
-               {% if evento.categorias_id.count %}
-               <!-- <p class="card-text"><strong>Categorias:</strong> -->
-               {% for categoria in evento.categorias_id.all %}
-               <span class="badge bg-secondary">{{ categoria.nome }}</span>
-               {% endfor %}
-               </p>
-               {% else %}
-               <span class="card-text">Nenhuma categoria associada</span>
-               {% endif %}
-               <!-- Fim da renderização das categorias -->
-               {% if evento.localizacao %}
-               <div class="embed-responsive embed-responsive-16by9"></div>
-               <iframe class="embed-responsive-item"
-                  src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
-            </div>
+                     <!-- Renderização das categorias -->
+                     {% if evento.categorias_id.count %}
+                        <!-- <p class="card-text"><strong>Categorias:</strong> -->
+                           {% for categoria in evento.categorias_id.all %}
+                              <span class="badge bg-secondary">{{ categoria.nome }}</span>
+                           {% endfor %}
+                        </p>
+                     {% else %}
+                        <span class="card-text">Nenhuma categoria associada</span>
+                     {% endif %}
+                     <!-- Fim da renderização das categorias -->
+
+                  {% if evento.localizacao %}
+                  <div class="embed-responsive embed-responsive-16by9"></div>
+                     <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed/v1/place?key={{API_KEY}}={{ evento.localizacao }}"></iframe>
+                     </div>
+                  {% endif %}
+
+
+                  </div>
+               </div>
+            {% else %}
+               <p>Evento não encontrado.</p>
             {% endif %}
          </div>
       </div>
-      {% else %}
-      <p>Evento não encontrado.</p>
-      {% endif %}
    </div>
-</div>
-</div>
-{% endblock %}
+
+   
+   {% endblock %}
