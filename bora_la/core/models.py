@@ -119,7 +119,11 @@ class Avaliacao(models.Model):
     Modelo para representar uma avaliação de evento.
     """
 
-    usuario_id = models.OneToOneField(Usuario, on_delete=models.CASCADE, null=False)
+    usuario_id = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False)
     evento_id = models.ForeignKey(Evento, on_delete=models.CASCADE, null=False)
     nota = models.IntegerField(null=False)
     comentario = models.TextField(blank=True, null=True)
+
+    class Meta:
+        # Garante que a combinação única de usuario_id e evento_id seja única
+        unique_together = ('usuario_id', 'evento_id')
