@@ -175,9 +175,9 @@
                      </a>
                      </div>
                   <div>
-                      <a href="https://www.instagram.com/create/story">
+                      <!-- <a href="https://www.instagram.com/create/story">
                            <i class="fab fa-instagram fa-lg custom-instagram-color"></i>
-                     </a>
+                     </a> -->
                   </div>
                </div>
 
@@ -208,6 +208,29 @@
          </div>
       </div>
    </div>
+<!-- Arquivos JS do Bootstrap e jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
+<script>
+   function Avaliar(nota) {
+      var avaliacao = 0;
+
+      // Atualiza as estrelas clicadas
+      for (var i = 1; i <= 5; i++) {
+         var elemento = document.getElementById("s" + i);
+         if (i <= nota) {
+            elemento.innerHTML = "★";
+            elemento.style.color = "green";
+         } else {
+            elemento.innerHTML = "☆";
+            elemento.style.color = "black";
+         }
+      }
+      document.getElementById("nota").value = nota;
+      console.log(nota);
+   }
+
+</script>
    
    {% endblock %}
