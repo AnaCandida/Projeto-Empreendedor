@@ -1,0 +1,55 @@
+server {
+	listen 80;
+	listen [::]:80;
+
+	index index.html index.htm index.nginx-debian.html index.php;
+
+	server_name temp.otaviomiranda.com.br;
+
+	location /static/ {
+	        root /home/acandida_quadros/app/staticfiles/;
+	}
+
+	location /media {
+                alias /home/acandida_quadros/app/media/;
+	}
+
+	location / {
+		include proxy_params;
+		proxy_pass http://unix:/run/gunicorn_blog.sock;
+	}
+
+	location ~ /\.ht {
+		deny all;
+	}
+
+	location ~ /\. {
+		access_log off;
+		log_not_found off;
+		deny all;
+	}
+
+	gzip on;
+	gzip_disable "msie6";
+
+	gzip_comp_level 6;
+	gzip_min_length 1100;
+	gzip_buffers 4 32k;
+	gzip_proxied any;
+	gzip_types
+		text/plain
+		text/css
+		text/js
+		text/xml
+		text/javascript
+		application/javascript
+		application/x-javascript
+		application/json
+		application/xml
+		application/rss+xml
+		image/svg+xml;
+
+	access_log off;
+	#access_log  /var/log/nginx/temp.otaviomiranda.com.br-access.log;
+	error_log   /var/log/nginx/temp.otaviomiranda.com.br-error.log;
+}

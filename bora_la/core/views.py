@@ -23,7 +23,7 @@ from django.contrib import messages
 
 env = environ.Env()
 env.read_env()
-EVENTOS_POR_PAGINA = 3
+EVENTOS_POR_PAGINA = 4
 MSG_PARA_COMPARTILHAR = "Confira esse evento incrível que está chegando! Clique no link abaixo para conferir mais detalhes:"
 MSG_ERRO_COMPARTILHAR = "Ocorreu um erro ao tentar compartilhar o evento"
 MSG_SUCESS_AGRADECIMENTO = "Obrigada por compartilhar conosco sua experiência!"
@@ -98,7 +98,10 @@ def cadastrar_usuario(request):
         return render(
             request,
             "cadastro.html",
-            {"form_usuario": form_usuario, "categorias": categorias_disponiveis},
+            {
+                "form_usuario": form_usuario,
+                "categorias": categorias_disponiveis,
+            },
         )
 
 def editar_usuario(request, id):
@@ -127,7 +130,9 @@ def editar_usuario(request, id):
             pprint.pprint(usuario.__dict__)
             pprint.pprint(django_user.username)
 
-            django_user.username = username if username else django_user.username
+            django_user.username = (
+                username if username else django_user.username
+            )
             usuario.nome = nome if nome else usuario.nome
             usuario.tipo_usuario = (
                 tipo_usuario if tipo_usuario else usuario.tipo_usuario
@@ -157,7 +162,9 @@ def editar_usuario(request, id):
         "tipo_usuario": usuario.tipo_usuario,
         "usuario": usuario,
         "categorias": categorias_default,
-        "categorias_usuario": usuario.pref_categorias.values_list("id", flat=True),
+        "categorias_usuario": usuario.pref_categorias.values_list(
+            "id", flat=True
+        ),
     }
     pprint.pprint(usuario.pref_categorias.values_list("id", flat=True))
 
@@ -171,7 +178,9 @@ def editar_senha(request, id):
         "tipo_usuario": usuario.tipo_usuario,
         "usuario": usuario,
         "categorias": categorias_default,
-        "categorias_usuario": usuario.pref_categorias.values_list("id", flat=True),
+        "categorias_usuario": usuario.pref_categorias.values_list(
+            "id", flat=True
+        ),
     }
 
     if request.method == "POST":
@@ -187,7 +196,10 @@ def editar_senha(request, id):
                 login(request, usuario.django_user)
 
                 return JsonResponse(
-                    {"success": True, "message": "Senha atualizada com sucesso!"}
+                    {
+                        "success": True,
+                        "message": "Senha atualizada com sucesso!",
+                    }
                 )
             else:
                 return JsonResponse(
@@ -198,7 +210,9 @@ def editar_senha(request, id):
                 )
         except Exception as e:
             error_message = ", ".join(e)
-            return JsonResponse({"success": False, "error_message": error_message})
+            return JsonResponse(
+                {"success": False, "error_message": error_message}
+            )
 
     return redirect("editar_usuario", context)
 
@@ -303,18 +317,15 @@ def cadastrar_evento(request):
 def editar_evento(request, id):
     tipo_usuario = None
     categorias_default = Categoria.objects.all()
-
     evento = get_object_or_404(Evento, pk=id)
     if request.method == "POST":
         nome_evento = request.POST.get("nome_evento")
         descricao = request.POST.get("descricao_evento")
         user = request.user
         horario_str = request.POST.get("data_evento")
-        # horario = datetime.strptime(horario_str, "%Y-%m-%dT%H:%M").replace(
-        #     tzinfo=pytz.UTC
-        # )
-        horario = timezone.make_aware(datetime.strptime(horario_str, "%Y-%m-%dT%H:%M"))
-
+        horario = timezone.make_aware(
+            datetime.strptime(horario_str, "%Y-%m-%dT%H:%M")
+        )
         localizacao = request.POST.get("endereco_evento")
         preco_ingressos = request.POST.get("preco_evento")
         foto = request.FILES.get("image")
@@ -359,17 +370,13 @@ def editar_evento(request, id):
         "categorias_evento": evento.categorias_id.values_list("id", flat=True),
         "categorias": categorias_default,
     }
-    pprint.pprint(evento.__dict__)
-    pprint.pprint(evento.categorias_id.all())
-    pprint.pprint(evento.categorias_id.values_list("id", flat=True))
-
     return render(request, "editar_evento.html", context)
 
 def visualizar_evento(request, id):
-    api_key = env("API_KEY")
+    api_key = "AIzaSyB0Ilo6q3r2qmNEDNUzaxDPG0qFcqoI93E&q"
     tipo_usuario = None
     if request.user.is_authenticated:
-        tipo_usuario = get_tipo_usuario(request.user)
+       tipo_usuario = get_tipo_usuario(request.user)
     evento = get_object_or_404(Evento, pk=id)
     # Codifica a localizacao para usar na URL do Google Maps
     localizacao = quote(evento.localizacao)
@@ -391,7 +398,7 @@ def visualizar_evento(request, id):
 def listar_eventos(request):
     tipo_usuario = None
     if request.user.is_authenticated:
-        tipo_usuario = get_tipo_usuario(request.user)
+      tipo_usuario = get_tipo_usuario(request.user)
 
     eventos = Evento.objects.all()
     eventos_por_pagina = EVENTOS_POR_PAGINA

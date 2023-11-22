@@ -119,7 +119,9 @@ class Avaliacao(models.Model):
     Modelo para representar uma avaliação de evento.
     """
 
-    usuario_id = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False)
+    usuario_id = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, null=False
+    )
     evento_id = models.ForeignKey(Evento, on_delete=models.CASCADE, null=False)
     nota = models.IntegerField(null=False)
     comentario = models.TextField(blank=True, null=True)
