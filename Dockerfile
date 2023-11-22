@@ -3,7 +3,7 @@ LABEL maintainer="Grupo TCC: Ana Quadros, Emerson Felippini, Hellen de Freitas, 
 
 ENV PYTHONUNBUFFERED 1
 ENV PATH="/py/bin:$PATH"
-RUN apk update && apk add postgresql-client postgresql-dev
+RUN apk update && apk add postgresql-client postgresql-dev gcc musl-dev  linux-headers
 
 COPY ./requirements.txt /requirements.txt
 COPY ./requirements.dev.txt /requirements.dev.txt
